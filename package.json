@@ -34,6 +34,7 @@
     "appId": "org.artbook",
     "files": [
       "dist/",
+      "assets/",
       "node_modules/",
       "index.html",
       "main.prod.js",

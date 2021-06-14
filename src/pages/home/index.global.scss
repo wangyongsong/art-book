@@ -1,0 +1,14 @@
+.home {
+  display: flex;
+  height: 100%;
+  .platform {
+    width: 150px;
+    height: 100%;
+    overflow-y: scroll;
+  }
+  .ResourceManager {
+    flex: 1;
+    height: 100%;
+    background-color: rgb(241, 235, 216);
+  }
+}

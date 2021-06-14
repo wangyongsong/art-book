@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
   SettingOutlined,
@@ -42,16 +42,25 @@ const sideItemList: SideItem[] = [
 ];
 
 export default function SideBar() {
-  const [isActivedItem, setisActivedItem] = useState(1);
   const history = useHistory();
 
-  const isActived = (item: SideItem) => {
-    setisActivedItem(item.id);
+  const [isActivedItem, setisActivedItem] = useState(1);
 
-    if (item.path && history.push) {
+  const isActived = (item: SideItem) => {
+    const { pathname } = history.location;
+    setisActivedItem(item.id);
+    if (item.path && history.push && pathname !== item.path) {
       history.push(item.path);
     }
   };
+
+  useEffect(() => {
+    const { pathname } = history.location;
+    const isAct = sideItemList.filter(
+      (item: SideItem) => item.path === pathname
+    );
+    setisActivedItem(isAct[0].id);
+  }, []);
 
   return (
     <div className="sidebar flexColumn">

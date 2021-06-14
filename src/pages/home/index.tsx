@@ -1,11 +1,12 @@
 import React from 'react';
-import { Button } from 'antd';
+import Platform from './components/platform';
+import './index.global.scss';
 
 const Home = () => {
   return (
-    <div>
-      Home
-      <Button type="primary">Button</Button>
+    <div className="home">
+      <Platform />
+      <div className="ResourceManager">File</div>
     </div>
   );
 };
