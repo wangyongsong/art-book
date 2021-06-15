@@ -1,6 +1,6 @@
 ---
 name: '报告Bug 🐛'
-about: 报告 ProComponents 的 bug
+about: 报告 Art Book 的 bug
 title: '🐛[BUG]'
 labels: '🐛bug'
 assignees: ''
@@ -32,10 +32,8 @@ assignees: ''
 
 ### © 版本信息
 
-- ProComponents 版本: [e.g. 4.0.0]
-- umi 版本
-- 浏览器环境
-- 开发环境 [e.g. mac OS]
+- ArtBook 版本: [e.g. 1.0.0]
+- 运行环境 [e.g. mac OS]
 
 ### 🚑 其他信息
 
