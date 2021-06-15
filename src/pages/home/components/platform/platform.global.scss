@@ -2,14 +2,16 @@
   padding: 2px 0;
   box-sizing: border-box;
   user-select: none;
-  background-color: rgb(248, 247, 244);
+  color: #ccc;
+  background-color: rgb(37, 37, 38);
+  outline-color: rgba(83, 89, 93, 0.5);
   & > ul {
     list-style: none;
-    padding: 0 5px;
+    padding: 0;
     & > li {
-      border-bottom: 1px solid #f0f0f0;
-      border-right: 10px solid opacity($color: #fff);
+      border-right: 10px solid opacity($color: rgb(172, 172, 172));
       height: 50px;
+      padding: 0 10px;
       display: flex;
       align-items: center;
       cursor: pointer;
@@ -29,8 +31,13 @@
         }
         .desc {
           font-size: 11px;
+          line-height: 13px;
           flex: 1;
+          color: #ccc;
         }
+      }
+      &:hover {
+        background: #2a2d2e;
       }
     }
   }

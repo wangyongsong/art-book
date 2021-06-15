@@ -6,7 +6,7 @@ const Home = () => {
   return (
     <div className="home">
       <Platform />
-      <div className="ResourceManager">File</div>
+      <div className="ResourceManager">111</div>
     </div>
   );
 };
