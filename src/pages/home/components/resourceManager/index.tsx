@@ -46,6 +46,8 @@ const ResourceManager = () => {
     setCheckAll(e.target.checked);
   };
 
+  console.log(`111111`, 111111);
+
   return (
     <div className="resourceManagerContent">
       <div className="resourceManagerHeader">
