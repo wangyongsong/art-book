@@ -1,10 +1,4 @@
-.platform {
-  padding: 2px 0;
-  box-sizing: border-box;
-  user-select: none;
-  color: #ccc;
-  background-color: rgb(37, 37, 38);
-  outline-color: rgba(83, 89, 93, 0.5);
+.platformContent {
   & > ul {
     list-style: none;
     padding: 0;

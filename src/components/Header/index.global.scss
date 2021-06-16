@@ -1,4 +1,11 @@
+@import '../../styles/generalVariable.global.scss';
+
 .header {
-  background-color: #313131;
-  color: rgb(204, 204, 204);
+  padding: 0 5px;
+  height: 25px;
+  background-color: $ab-bg-color-dark2;
+  color: $ab-text-color-dark1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }

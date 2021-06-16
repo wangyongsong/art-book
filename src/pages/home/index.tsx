@@ -1,12 +1,21 @@
 import React from 'react';
 import Platform from './components/platform';
-import './index.global.scss';
+import ResourceManager from './components/resourceManager';
+import ResourceSeeting from './components/resourceSeeting';
+import './home.global.scss';
 
 const Home = () => {
   return (
     <div className="home">
-      <Platform />
-      <div className="ResourceManager">111</div>
+      <div className="platform">
+        <Platform />
+      </div>
+      <div className="resourceManager">
+        <ResourceManager />
+      </div>
+      <div className="resourceSeeting">
+        <ResourceSeeting />
+      </div>
     </div>
   );
 };

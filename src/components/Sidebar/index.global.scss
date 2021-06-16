@@ -1,8 +1,10 @@
+@import '../../styles/generalVariable.global.scss';
+
 .sidebar {
   width: 48px;
   height: 100%;
-  background-color: rgb(51, 51, 51);
-  color: rgba(255, 255, 255, .5);
+  background-color: $ab-bg-color-dark3;
+  color: $ab-text-color-dark2;
 
   .up {
     width: 100%;

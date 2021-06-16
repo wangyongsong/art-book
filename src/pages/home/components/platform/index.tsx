@@ -34,7 +34,7 @@ const Platform = () => {
   ];
 
   return (
-    <div className="platform">
+    <div className="platformContent">
       <ul>
         {data.map((item: any) => {
           return (
