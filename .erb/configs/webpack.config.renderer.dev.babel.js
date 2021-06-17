@@ -145,54 +145,25 @@ export default merge(baseConfig, {
           },
         ],
       },
-      // [custome] Add LESS support-当是 .global.less 文件时,作为全局样式引入
       {
-        test: /\.global\.less$/,
-        use: [
-          {
-            loader: 'style-loader',
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true,
-              importLoaders: 1,
-            },
-          },
-          {
-            loader: 'less-loader',
-            options: {
-              sourceMap: true,
+        test: /\.less$/,
+        use: [{
+          loader: 'style-loader',
+        }, {
+          loader: 'css-loader',
+        }, {
+          loader: 'less-loader',
+          options: {
+            lessOptions: {
+              // modifyVars: {
+              //   'primary-color': '#e6315a',
+              //   'link-color': '#e6315a',
+              //   'border-radius-base': '2px',
+              // },
               javascriptEnabled: true,
             },
           },
-        ],
-      },
-      // [custome] Add LESS support-当是非 .global.less 文件时，作为css module样式引入
-      {
-        test: /^((?!\.global).)*\.less$/,
-        use: [
-          {
-            loader: 'style-loader',
-          },
-          {
-            loader: 'css-loader',
-            options: {
-              modules: {
-                localIdentName: '[name]__[local]__[hash:base64:5]',
-              },
-              sourceMap: true,
-              importLoaders: 1,
-            },
-          },
-          {
-            loader: 'less-loader',
-            options: {
-              sourceMap: true,
-              javascriptEnabled: true,
-            },
-          },
-        ],
+        }],
       },
       // WOFF Font
       {

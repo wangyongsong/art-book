@@ -4,16 +4,10 @@
   height: 435px;
   width: 100%;
   .resourceBox {
-    // flex: 1;
-    // display: flex;
-    // flex-wrap: wrap;
-    // padding: 0 25px;
-    // align-content: flex-start;
-    // overflow-y: scroll;
+    height: 435px;
+    overflow-y: scroll;
     .resourceItem {
-
       .checkbox {
-
         // z-index: 9999;
       }
       .resourceImage {
