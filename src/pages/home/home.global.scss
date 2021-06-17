@@ -3,8 +3,9 @@
 .home {
   display: flex;
   height: 100%;
+  overflow: hidden;
   .platformContent {
-    width: 130px;
+    width: 150px;
     height: 100%;
     overflow-y: scroll;
     padding: 2px 0;
@@ -16,7 +17,8 @@
   }
   .resourceManager {
     flex: 1;
-    height: 100%;
+    display: flex;
+    overflow: hidden;
   }
   .resourceSeeting {
     width: 200px;

@@ -1,41 +1,90 @@
 @import '../../../../styles//generalVariable.global.scss';
 
 .resourceManagerContent {
-  height: 435px;
+  // height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
   .resourceManagerHeader {
-    height: 25px;
+    height: 32px;
     width: 100%;
-    padding: 0 10px;
     background-color: $ab-bg-color-dark1;
     display: flex;
+    justify-content: space-between;
     align-items: center;
+    padding: 0 10px;
+    .selectNum {
+      font-size: 11px;
+      margin-left: 5px;
+    }
     .itemIcon {
       margin: 0 10px;
     }
   }
+
   .resourceBox {
     flex: 1;
     display: flex;
     flex-wrap: wrap;
-    padding: 0 25px;
-    align-content: flex-start;
+    margin: 15px;
+    box-sizing: border-box;
     overflow-y: scroll;
+    align-content: flex-start;
     .resourceItem {
       position: relative;
-      margin: 15px 5px 0;
+      overflow: hidden;
+      padding: 6px;
       .checkbox {
         position: absolute;
         top: -3px;
         left: 0;
-        // z-index: 9999;
       }
       .resourceImage {
       }
       .resourceTool {
+        margin-top: 0px;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+
+        .toolIcon {
+          margin-right: 3px;
+          cursor: pointer;
+        }
+        .toolIconLast {
+          cursor: pointer;
+        }
+
+        .resourceItemTag {
+          width: 10px;
+          height: 10px;
+          display: inline-block;
+          border-radius: 50%;
+        }
       }
     }
+
+    .previewImgText {
+      // display: flex;
+      // flex-direction: column;
+      // justify-content: center;
+      // align-items: center;
+      position: relative;
+
+      div:nth-last-child(1) {
+        font-size: 8px;
+        position: absolute;
+        top: -25px;
+        left: 5px;
+        width: 60px;
+      }
+    }
+  }
+
+  .resourceManagerFooter {
+    display: flex;
+    margin: 5px 0;
+    height: 25px;
+    justify-content: flex-end;
   }
 }

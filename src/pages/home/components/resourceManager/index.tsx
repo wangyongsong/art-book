@@ -1,72 +1,133 @@
 /* eslint-disable no-plusplus */
-import React from 'react';
-import { Image, Checkbox } from 'antd';
+import React, { useEffect, useState } from 'react';
 import {
+  Image,
+  Checkbox,
+  Pagination,
+  Menu,
+  Dropdown,
+  Button,
+  Tooltip,
+} from 'antd';
+import {
+  TagFilled,
   CopyOutlined,
   FormOutlined,
-  DeleteOutlined,
-  // RedoOutlined,
+  EllipsisOutlined,
+  DownOutlined,
   EyeOutlined,
+  PlusOutlined,
+  DeleteOutlined,
+  PlusCircleOutlined,
+  CloseCircleOutlined,
 } from '@ant-design/icons';
 import './resourceManager.global.scss';
 
-const plainOptions = [
-  {
-    id: 0,
-    src: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
-  },
-  {
-    id: 1,
-    src:
-      'https://gw.alipayobjects.com/zos/antfincdn/aPkFc8Sj7n/method-draw-image.svg',
-  },
-];
+const plainOptions: any[] = [];
 
-for (let index = 2; index < 1000; index++) {
+for (let index = 2; index < 10000; index++) {
   plainOptions.push({
     id: index,
+    tag: { color: '#177ddc', name: '常规' },
+    createdTime: '2021-12-18 23:58:58',
     src:
-      'https://imrorwxhijjqlo5q-static.micyjz.com/cloud/mkBpiKmlRliSlnlpqjllk/22.jpg',
+      'https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ea16646c40fc45639ff04f44f09bb90d~tplv-k3u1fbpfcp-watermark.image',
   });
 }
+
 const ResourceManager = () => {
-  const [checkedList, setCheckedList] = React.useState<any[]>([]);
-  const [indeterminate, setIndeterminate] = React.useState(false);
-  const [checkAll, setCheckAll] = React.useState(false);
+  const [checkedList, setCheckedList] = useState<any[]>([]);
+  const [showList, setShowList] = useState<any[]>([]);
+  const [current, setCurrent] = useState(1);
 
-  const onChange = (list: any) => {
+  const checkOnChange = (list: any) => {
     setCheckedList(list);
-    setIndeterminate(!!list.length && list.length < plainOptions.length);
-    setCheckAll(list.length === plainOptions.length);
   };
 
-  const onCheckAllChange = (e: any) => {
-    setCheckedList(e.target.checked ? plainOptions : []);
-    setIndeterminate(false);
-    setCheckAll(e.target.checked);
+  const computedElement = () => {
+    const resourceItemEle: HTMLElement | null = document.querySelector(
+      '.resourceItem'
+    );
+    const resourceBoxEle: HTMLElement | null = document.querySelector(
+      '.resourceBox'
+    );
+
+    const itemHeight: any = resourceItemEle?.offsetHeight || 92;
+    const itemWidth: any = resourceItemEle?.offsetWidth || 73;
+
+    const resourceBoxHeight: any = resourceBoxEle?.offsetHeight;
+    const resourceBoxWidth: any = resourceBoxEle?.offsetWidth;
+    const xNum = Math.floor(resourceBoxWidth / itemWidth);
+    const yNum = Math.floor(resourceBoxHeight / itemHeight);
+    console.log(itemHeight, itemWidth);
+    const pageSize = xNum * yNum;
+    return pageSize;
   };
 
-  console.log(`111111`, 111111);
+  const paginationChange = (page: number) => {
+    setCurrent(page);
+    const sum = computedElement();
+    setShowList([...plainOptions.slice((page - 1) * sum, page * sum)]);
+  };
+
+  useEffect(() => {
+    paginationChange(1);
+  }, []);
+
+  const menuOnClick = ({ key }: any) => {
+    switch (key) {
+      case '1':
+        setCheckedList([...showList]);
+        break;
+      case '2':
+        setCheckedList([...plainOptions]);
+        break;
+      case '3':
+        setCheckedList([]);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const menu = (
+    <Menu onClick={menuOnClick}>
+      <Menu.Item key="1" icon={<PlusOutlined />}>
+        选中当前页
+      </Menu.Item>
+      <Menu.Item key="2" icon={<PlusCircleOutlined />}>
+        全选所有页
+      </Menu.Item>
+      <Menu.Item key="3" icon={<CloseCircleOutlined />}>
+        清空选中项
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <div className="resourceManagerContent">
+      {/* header */}
       <div className="resourceManagerHeader">
-        <Checkbox
-          indeterminate={indeterminate}
-          onChange={onCheckAllChange}
-          checked={checkAll}
-        >
-          全选
-        </Checkbox>
+        <div>
+          <Dropdown overlay={menu} trigger={['click']}>
+            <Button type="primary" size="small" ghost>
+              批量选中 <DownOutlined />
+            </Button>
+          </Dropdown>
+          {!!checkedList.length && (
+            <span className="selectNum">已选择 {checkedList.length} 项</span>
+          )}
+        </div>
       </div>
+
+      {/* body */}
       <Checkbox.Group
         className="resourceBox"
-        onChange={onChange}
+        onChange={checkOnChange}
         value={checkedList}
       >
-        {/* <div className="resourceBox"> */}
         <Image.PreviewGroup>
-          {plainOptions.map((item: any) => {
+          {showList.map((item: any) => {
             return (
               <div key={item.id} className="resourceItem">
                 <Image
@@ -76,25 +137,48 @@ const ResourceManager = () => {
                   className="resourceImage"
                   preview={{
                     mask: (
-                      <div>
-                        <EyeOutlined /> 预览
+                      <div className="previewImgText">
+                        <div>
+                          <EyeOutlined /> 预览
+                        </div>
+                        <div>{item.createdTime}</div>
                       </div>
                     ),
                   }}
                 />
                 <Checkbox value={item} className="checkbox" />
                 <div className="resourceTool">
-                  <CopyOutlined />
-                  <FormOutlined />
-                  <DeleteOutlined />
-                  {/* <RedoOutlined /> */}
+                  <Tooltip title={item.tag.name}>
+                    <div
+                      style={{ background: item.tag.color }}
+                      className="resourceItemTag toolIcon"
+                    />
+                  </Tooltip>
+                  <CopyOutlined className="toolIcon" />
+                  <DeleteOutlined className="toolIcon" />
+                  <Dropdown overlay={menu}>
+                    <EllipsisOutlined className="toolIconLast" />
+                  </Dropdown>
+                  {/* <span className="toolIcon"> {item.id}</span> */}
                 </div>
               </div>
             );
           })}
         </Image.PreviewGroup>
-        {/* </div> */}
       </Checkbox.Group>
+
+      {/* footer */}
+      <div className="resourceManagerFooter">
+        <Pagination
+          simple
+          total={plainOptions.length}
+          size="small"
+          pageSize={computedElement()}
+          current={current}
+          onChange={paginationChange}
+          showTotal={(total) => `总共 ${total} 条`}
+        />
+      </div>
     </div>
   );
 };
