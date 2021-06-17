@@ -145,15 +145,35 @@ export default merge(baseConfig, {
           },
         ],
       },
-      // LESS support - compile all other .scss files and pipe it to style.css
+      // [custome] Add LESS support-当是 .global.less 文件时,作为全局样式引入
       {
-        test: /\.less$/,
+        test: /\.global\.less$/,
         use: [
           {
             loader: 'style-loader',
           },
           {
-            loader: '@teamsupercell/typings-for-css-modules-loader',
+            loader: 'css-loader',
+            options: {
+              sourceMap: true,
+              importLoaders: 1,
+            },
+          },
+          {
+            loader: 'less-loader',
+            options: {
+              sourceMap: true,
+              javascriptEnabled: true,
+            },
+          },
+        ],
+      },
+      // [custome] Add LESS support-当是非 .global.less 文件时，作为css module样式引入
+      {
+        test: /^((?!\.global).)*\.less$/,
+        use: [
+          {
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader',
@@ -167,6 +187,10 @@ export default merge(baseConfig, {
           },
           {
             loader: 'less-loader',
+            options: {
+              sourceMap: true,
+              javascriptEnabled: true,
+            },
           },
         ],
       },
