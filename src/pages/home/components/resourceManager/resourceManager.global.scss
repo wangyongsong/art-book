@@ -65,10 +65,6 @@
     }
 
     .previewImgText {
-      // display: flex;
-      // flex-direction: column;
-      // justify-content: center;
-      // align-items: center;
       position: relative;
 
       div:nth-last-child(1) {
@@ -77,6 +73,7 @@
         top: -25px;
         left: 5px;
         width: 60px;
+        color: rgba($color: #fff, $alpha: 0.7);
       }
     }
   }
