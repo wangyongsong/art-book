@@ -25,7 +25,7 @@ import './resourceManager.global.scss';
 
 const plainOptions: any[] = [];
 
-for (let index = 2; index < 10000; index++) {
+for (let index = 1; index < 100; index++) {
   plainOptions.push({
     id: index,
     tag: { color: '#177ddc', name: '常规' },
