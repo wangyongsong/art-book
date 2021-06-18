@@ -4,6 +4,7 @@ import {
   SettingOutlined,
   AppstoreOutlined,
   HeartOutlined,
+  BellOutlined,
 } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import classnames from 'classnames';
@@ -38,6 +39,12 @@ const sideItemList: SideItem[] = [
     placement: 'down',
     path: '/about',
     icon: <SettingOutlined />,
+  },
+  {
+    id: 11,
+    tooltip: '通知',
+    placement: 'down',
+    icon: <BellOutlined />,
   },
 ];
 

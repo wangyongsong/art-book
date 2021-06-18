@@ -1,8 +1,10 @@
 @import '../../styles/generalVariable.global.scss';
 
+$pro-header-hover-bg: rgba(0, 0, 0, 0.025);
+
 .header {
   padding: 0 5px;
-  height: 25px;
+  height: 35px;
   background-color: $ab-bg-color-dark2;
   color: $ab-text-color-dark1;
   display: flex;

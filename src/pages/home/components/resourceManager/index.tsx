@@ -10,9 +10,7 @@ import {
   Tooltip,
 } from 'antd';
 import {
-  TagFilled,
   CopyOutlined,
-  FormOutlined,
   EllipsisOutlined,
   DownOutlined,
   EyeOutlined,
@@ -39,6 +37,7 @@ const ResourceManager = () => {
   const [checkedList, setCheckedList] = useState<any[]>([]);
   const [showList, setShowList] = useState<any[]>([]);
   const [current, setCurrent] = useState(1);
+  const [comptedPageSize, setComptedPageSize] = useState(24);
 
   const checkOnChange = (list: any) => {
     setCheckedList(list);
@@ -61,6 +60,7 @@ const ResourceManager = () => {
     const yNum = Math.floor(resourceBoxHeight / itemHeight);
     console.log(itemHeight, itemWidth);
     const pageSize = xNum * yNum;
+    if (pageSize) setComptedPageSize(pageSize);
     return pageSize;
   };
 
@@ -173,7 +173,7 @@ const ResourceManager = () => {
           simple
           total={plainOptions.length}
           size="small"
-          pageSize={computedElement()}
+          pageSize={comptedPageSize}
           current={current}
           onChange={paginationChange}
           showTotal={(total) => `总共 ${total} 条`}

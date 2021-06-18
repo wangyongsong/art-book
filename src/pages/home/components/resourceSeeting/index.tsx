@@ -9,7 +9,7 @@ import {
   Progress,
   Popover,
 } from 'antd';
-import { UploadOutlined } from '@ant-design/icons';
+import { CloudUploadOutlined } from '@ant-design/icons';
 
 import './resourceSeeting.global.scss';
 
@@ -45,11 +45,11 @@ const ResourceSeeting = () => {
           <Switch checkedChildren="开启" unCheckedChildren="关闭" />
         </Form.Item>
         <Form.Item name="uploadProgress" label="进度">
-          <Progress percent={100} status="active" />
+          <Progress percent={99} status="active" />
         </Form.Item>
         <Form.Item name="uploadProgress" label="队列">
           <Popover content={content} title="Title" placement="left">
-            <Button type="ghost" size="small">
+            <Button type="primary" size="small" ghost>
               查看队列图片
             </Button>
           </Popover>
@@ -58,18 +58,22 @@ const ResourceSeeting = () => {
         <Row justify="center">
           <Form.Item name="uploadCommonImage">
             <Upload name="file" action="" onChange={() => {}}>
-              <Button type="primary" shape="round" icon={<UploadOutlined />}>
+              <Button
+                type="primary"
+                shape="round"
+                icon={<CloudUploadOutlined />}
+              >
                 点击上传图片
               </Button>
             </Upload>
           </Form.Item>
           <Form.Item name="uploadClipboardImage">
-            <Button type="primary" shape="round" icon={<UploadOutlined />}>
+            <Button type="primary" shape="round" icon={<CloudUploadOutlined />}>
               上传剪切图片
             </Button>
           </Form.Item>
           <Form.Item name="uploadUrlImage">
-            <Button type="primary" shape="round" icon={<UploadOutlined />}>
+            <Button type="primary" shape="round" icon={<CloudUploadOutlined />}>
               上传URL图片
             </Button>
           </Form.Item>

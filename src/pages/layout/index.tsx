@@ -1,7 +1,7 @@
 import React from 'react';
 // import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import SideBar from '../../components/Sidebar';
-import Header from '../../components/Header';
+// import Header from '../../components/Header';
 // import Home from '../home';
 // import About from '../about';
 
@@ -17,9 +17,9 @@ const Layout = (props: Props) => {
     <section className="layout">
       <SideBar />
       <section className="container">
-        <div id="header">
+        {/* <div id="header">
           <Header />
-        </div>
+        </div> */}
         <div id="main">{children}</div>
       </section>
     </section>

@@ -1,4 +1,6 @@
 import React from 'react';
+import { Avatar, Space } from 'antd';
+import { BellOutlined } from '@ant-design/icons';
 import './index.global.scss';
 
 export default function Header() {
@@ -14,5 +16,16 @@ export default function Header() {
   //   </Menu>
   // );
 
-  return <div className="header"> </div>;
+  return (
+    <div className="header">
+      <Space>
+        <BellOutlined />
+        <Avatar
+          alt="avatar"
+          src="https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png"
+          size="small"
+        />
+      </Space>
+    </div>
+  );
 }
