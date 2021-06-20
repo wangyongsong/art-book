@@ -90,7 +90,7 @@ const ResourceManager = () => {
     }
   };
 
-  const menu = (
+  const selectedMenu = (
     <Menu onClick={menuOnClick}>
       <Menu.Item key="1" icon={<PlusOutlined />}>
         选中当前页
@@ -104,12 +104,23 @@ const ResourceManager = () => {
     </Menu>
   );
 
+  const pictureMenu = (
+    <Menu onClick={() => {}}>
+      <Menu.Item key="1" icon={<CopyOutlined />}>
+        生成 HTML 链接
+      </Menu.Item>
+      <Menu.Item key="2" icon={<CopyOutlined />}>
+        生成 MarkDown 链接
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <div className="resourceManagerContent">
       {/* header */}
       <div className="resourceManagerHeader">
         <div>
-          <Dropdown overlay={menu} trigger={['click']}>
+          <Dropdown overlay={selectedMenu} trigger={['click']}>
             <Button type="primary" size="small" ghost>
               批量选中 <DownOutlined />
             </Button>
@@ -156,10 +167,9 @@ const ResourceManager = () => {
                   </Tooltip>
                   <CopyOutlined className="toolIcon" />
                   <DeleteOutlined className="toolIcon" />
-                  <Dropdown overlay={menu}>
+                  <Dropdown overlay={pictureMenu}>
                     <EllipsisOutlined className="toolIconLast" />
                   </Dropdown>
-                  {/* <span className="toolIcon"> {item.id}</span> */}
                 </div>
               </div>
             );

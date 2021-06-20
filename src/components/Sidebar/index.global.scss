@@ -26,8 +26,13 @@
     cursor: pointer;
   }
 
+  .iconBadge {
+    font-size: 24px;
+    color: $ab-text-color-dark2;
+  }
+
   .actived {
-    color: #fff;
+    color: #fff !important;
   }
 }
 
