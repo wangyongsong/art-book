@@ -74,7 +74,7 @@ const ResourceSeeting = () => {
           </Form.Item>
           <Form.Item name="uploadUrlImage">
             <Button type="primary" shape="round" icon={<CloudUploadOutlined />}>
-              上传URL图片
+              上传在线图片
             </Button>
           </Form.Item>
         </Row>

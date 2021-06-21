@@ -5,9 +5,8 @@ import {
   AppstoreOutlined,
   HeartOutlined,
   BellOutlined,
-  SyncOutlined,
 } from '@ant-design/icons';
-import { Badge, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import classnames from 'classnames';
 
 import './index.global.scss';
@@ -46,9 +45,9 @@ const sideItemList: SideItem[] = [
     tooltip: '通知',
     placement: 'down',
     icon: (
-      <Badge count={<SyncOutlined spin />}>
-        <BellOutlined className="iconBadge" />
-      </Badge>
+      // <Badge count={<SyncOutlined spin />}>
+      <BellOutlined />
+      // </Badge>
     ),
   },
 ];
