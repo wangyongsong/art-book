@@ -1,3 +1,10 @@
 .resourceSeetingForm {
   padding: 20px 0;
+  .colorOptionLabelItem {
+    display: flex;
+    align-items: center;
+    .roundItem {
+      padding-right: 5px;
+    }
+  }
 }

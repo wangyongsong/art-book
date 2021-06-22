@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import {
   SettingOutlined,
@@ -8,7 +8,7 @@ import {
 } from '@ant-design/icons';
 import { Tooltip } from 'antd';
 import classnames from 'classnames';
-
+import ConfigurationDrawer from '../Drawer/configurationDrawer';
 import './index.global.scss';
 
 type SideItem = {
@@ -17,45 +17,14 @@ type SideItem = {
   tooltip: string;
   path?: string;
   icon?: any;
+  clickFn?: any;
 };
-
-const sideItemList: SideItem[] = [
-  {
-    id: 1,
-    placement: 'up',
-    tooltip: '资源管理',
-    path: '/home',
-    icon: <AppstoreOutlined />,
-  },
-  {
-    id: 2,
-    tooltip: 'Star 💕',
-    placement: 'up',
-    icon: <HeartOutlined />,
-  },
-  {
-    id: 10,
-    tooltip: '设置',
-    placement: 'down',
-    path: '/about',
-    icon: <SettingOutlined />,
-  },
-  {
-    id: 11,
-    tooltip: '通知',
-    placement: 'down',
-    icon: (
-      // <Badge count={<SyncOutlined spin />}>
-      <BellOutlined />
-      // </Badge>
-    ),
-  },
-];
 
 export default function SideBar() {
   const history = useHistory();
 
   const [isActivedItem, setisActivedItem] = useState(1);
+  const ConfigurationDrawerRef: any = useRef();
 
   const isActived = (item: SideItem) => {
     const { pathname } = history.location;
@@ -63,7 +32,44 @@ export default function SideBar() {
     if (item.path && history.push && pathname !== item.path) {
       history.push(item.path);
     }
+    if (item.clickFn) {
+      item.clickFn();
+    }
   };
+
+  const sideItemList: SideItem[] = [
+    {
+      id: 1,
+      placement: 'up',
+      tooltip: '资源管理',
+      path: '/home',
+      icon: <AppstoreOutlined />,
+    },
+    {
+      id: 2,
+      tooltip: 'Star 💕',
+      placement: 'up',
+      icon: <HeartOutlined />,
+    },
+    {
+      id: 10,
+      tooltip: '设置',
+      placement: 'down',
+      // path: '/about',
+      clickFn: () => ConfigurationDrawerRef.current.open(),
+      icon: <SettingOutlined />,
+    },
+    {
+      id: 11,
+      tooltip: '通知',
+      placement: 'down',
+      icon: (
+        // <Badge count={<SyncOutlined spin />}>
+        <BellOutlined />
+        // </Badge>
+      ),
+    },
+  ];
 
   useEffect(() => {
     const { pathname } = history.location;
@@ -125,6 +131,7 @@ export default function SideBar() {
           return null;
         })}
       </div>
+      <ConfigurationDrawer oRef={ConfigurationDrawerRef} />
     </div>
   );
 }

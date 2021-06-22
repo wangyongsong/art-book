@@ -8,6 +8,7 @@ import {
   Dropdown,
   Button,
   Tooltip,
+  Result,
 } from 'antd';
 import {
   CopyOutlined,
@@ -18,15 +19,17 @@ import {
   DeleteOutlined,
   PlusCircleOutlined,
   CloseCircleOutlined,
+  SmileOutlined,
 } from '@ant-design/icons';
 import './resourceManager.global.scss';
+import CONSTDATA from '../../../../config/constData';
 
 const plainOptions: any[] = [];
 
 for (let index = 1; index < 100; index++) {
   plainOptions.push({
     id: index,
-    tag: { color: '#177ddc', name: '常规' },
+    tag: 'rgb(78,167,251)',
     createdTime: '2021-12-18 23:58:58',
     src:
       'https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ea16646c40fc45639ff04f44f09bb90d~tplv-k3u1fbpfcp-watermark.image',
@@ -58,7 +61,7 @@ const ResourceManager = () => {
     const resourceBoxWidth: any = resourceBoxEle?.offsetWidth;
     const xNum = Math.floor(resourceBoxWidth / itemWidth);
     const yNum = Math.floor(resourceBoxHeight / itemHeight);
-    console.log(itemHeight, itemWidth);
+    // console.log(itemHeight, itemWidth);
     const pageSize = xNum * yNum;
     if (pageSize) setComptedPageSize(pageSize);
     return pageSize;
@@ -120,7 +123,11 @@ const ResourceManager = () => {
       {/* header */}
       <div className="resourceManagerHeader">
         <div>
-          <Dropdown overlay={selectedMenu} trigger={['click']}>
+          <Dropdown
+            overlay={selectedMenu}
+            trigger={['click']}
+            disabled={!showList.length}
+          >
             <Button type="primary" size="small" ghost>
               批量选中 <DownOutlined />
             </Button>
@@ -138,42 +145,48 @@ const ResourceManager = () => {
         value={checkedList}
       >
         <Image.PreviewGroup>
-          {showList.map((item: any) => {
-            return (
-              <div key={item.id} className="resourceItem">
-                <Image
-                  width={60}
-                  height={60}
-                  src={item.src}
-                  className="resourceImage"
-                  preview={{
-                    mask: (
-                      <div className="previewImgText">
-                        <div>
-                          <EyeOutlined /> 预览
+          {showList.length ? (
+            showList.map((item: any) => {
+              return (
+                <div key={item.id} className="resourceItem">
+                  <Image
+                    width={60}
+                    height={60}
+                    src={item.src}
+                    className="resourceImage"
+                    preview={{
+                      mask: (
+                        <div className="previewImgText">
+                          <div>
+                            <EyeOutlined /> 预览
+                          </div>
+                          <div>{item.createdTime}</div>
                         </div>
-                        <div>{item.createdTime}</div>
-                      </div>
-                    ),
-                  }}
-                />
-                <Checkbox value={item} className="checkbox" />
-                <div className="resourceTool">
-                  <Tooltip title={item.tag.name}>
-                    <div
-                      style={{ background: item.tag.color }}
-                      className="resourceItemTag toolIcon"
-                    />
-                  </Tooltip>
-                  <CopyOutlined className="toolIcon" />
-                  <DeleteOutlined className="toolIcon" />
-                  <Dropdown overlay={pictureMenu}>
-                    <EllipsisOutlined className="toolIconLast" />
-                  </Dropdown>
+                      ),
+                    }}
+                  />
+                  <Checkbox value={item} className="checkbox" />
+                  <div className="resourceTool">
+                    <Tooltip title={CONSTDATA.tag[item.tag].text}>
+                      <div
+                        style={{ background: item.tag }}
+                        className="resourceItemTag toolIcon"
+                      />
+                    </Tooltip>
+                    <CopyOutlined className="toolIcon" />
+                    <DeleteOutlined className="toolIcon" />
+                    <Dropdown overlay={pictureMenu}>
+                      <EllipsisOutlined className="toolIconLast" />
+                    </Dropdown>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <div className="resourceBoxIsEmpty">
+              <Result icon={<SmileOutlined />} subTitle="您还未上传图片!" />
+            </div>
+          )}
         </Image.PreviewGroup>
       </Checkbox.Group>
 

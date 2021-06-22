@@ -24,3 +24,5 @@ export default function App() {
     </Router>
   );
 }
+
+console.log(`process`, process);
