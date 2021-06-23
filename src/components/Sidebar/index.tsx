@@ -55,8 +55,8 @@ export default function SideBar() {
       id: 10,
       tooltip: '设置',
       placement: 'down',
-      // path: '/about',
-      clickFn: () => ConfigurationDrawerRef.current.open(),
+      path: '/about',
+      // clickFn: () => ConfigurationDrawerRef.current.open(),
       icon: <SettingOutlined />,
     },
     {

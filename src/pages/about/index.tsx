@@ -2,16 +2,17 @@ import { Button } from 'antd';
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { addTodo } from '../../auction/homeAction';
+import db from '../../db';
 
 const About = (props: any) => {
   const data = useSelector((state: any) => state.homeReducer);
   const dispatch = useDispatch();
 
-  console.log(`data`, data);
-
   const add = useCallback(() => addTodo(dispatch, { val: 9999 }), [dispatch]);
 
-  console.log(`props`, props);
+  console.log(`read`, db.read());
+  // console.log(`get`, db.get('images'));
+
   return (
     <div>
       {data.count}

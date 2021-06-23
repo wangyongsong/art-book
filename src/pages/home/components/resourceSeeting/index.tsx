@@ -28,7 +28,6 @@ const ResourceSeeting = () => {
       <p>Content</p>
     </div>
   );
-
   const { Option } = Select;
 
   return (
@@ -90,8 +89,8 @@ const ResourceSeeting = () => {
               action=""
               fileList={fileList}
               onChange={(values) => {
-                console.log(`values`, values);
-                console.log(`form`, form.getFieldsValue());
+                console.log(`values`, values.file);
+                // console.log(`form`, form.getFieldsValue());
               }}
             >
               <Button
