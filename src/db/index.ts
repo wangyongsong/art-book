@@ -1,9 +1,11 @@
-import { LowSync, JSONFileSync } from 'lowdb';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import Datastore from 'lowdb';
+// @ts-ignore
+import LodashId from 'lodash-id';
+import FileSync from 'lowdb/adapters/FileSync';
 import fs from 'fs-extra';
 import { remote, app } from 'electron';
 import { join } from 'path';
-import { chain } from 'lodash';
-// import { chain } from 'lodash';
 
 const APP = process.type === 'renderer' ? remote.app : app;
 const USERDATA_PATCH = APP.getPath('userData');
@@ -16,72 +18,59 @@ if (process.type !== 'renderer') {
   }
 }
 
-type DataType = {
-  images: any[];
-  baseInfo: any;
-};
-
 class DB {
-  // private db: any;
-  /** main database, use this to access the db */
-  db: LowSync<DataType>;
-
-  public chain: any;
+  private db: Datastore.LowdbSync<Datastore.AdapterSync>;
 
   constructor() {
-    this.db = new LowSync(new JSONFileSync<DataType>(dataFile));
-    this.chain = chain(this.db.data);
-    this.initialize();
-    console.log(`this.db`, this.db);
-  }
+    const adapter = new FileSync(dataFile);
+    this.db = Datastore(adapter);
+    this.db._.mixin(LodashId);
 
-  private initialize() {
-    if (!this.db.data) {
-      Object.assign(this.db, { data: {} });
+    if (!this.db.has('images').value()) {
+      this.db.set('images', []).write();
     }
-
-    if (!this.db.data?.images) {
-      Object.assign(this.db.data, { images: [] });
-      this.db.write();
+    if (!this.db.has('baseInfo').value()) {
+      this.db.set('baseInfo', {}).write();
     }
-
-    if (!this.db.data?.baseInfo) {
-      Object.assign(this.db.data, { baseInfo: {} });
-      this.db.write();
+    if (!this.db.has('setting').value()) {
+      this.db.set('setting', {}).write();
     }
   }
 
   read() {
-    return this.db.data;
+    return this.db.read();
   }
 
-  // get(key = '') {
-  //   return this.db.chain.find(key);
-  // }
+  get(key = '') {
+    return this.read().get(key).value();
+  }
 
-  // set(key: string, value: any) {
-  //   return this.read().set(key, value).write();
-  // }
+  set(key: string, value: any) {
+    return this.read().set(key, value).write();
+  }
 
-  // has(key: string) {
-  //   return this.read().has(key).value();
-  // }
+  has(key: string) {
+    return this.read().has(key).value();
+  }
 
-  // insert(key: string, value: any): void {
-  //   return this.read().get(key).insert(value).write();
-  // }
+  insert(key: string, value: any): void {
+    // @ts-ignore
+    return this.read().get(key).insert(value).write();
+  }
 
-  // unset(key: string, value: any): boolean {
-  //   return this.read().get(key).unset(value).value();
-  // }
+  unset(key: string, value: any): boolean {
+    return this.read().get(key).unset(value).value();
+  }
 
-  // getById(key: string, id: string) {
-  //   return this.read().get(key).getById(id).value();
-  // }
+  getById(key: string, id: string) {
+    // @ts-ignore
+    return this.read().get(key).getById(id).value();
+  }
 
-  // removeById(key: string, id: string) {
-  //   return this.read().get(key).removeById(id).write();
-  // }
+  removeById(key: string, id: string) {
+    // @ts-ignore
+    return this.read().get(key).removeById(id).write();
+  }
 }
 
 export default new DB();
