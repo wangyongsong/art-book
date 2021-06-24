@@ -16,7 +16,7 @@ import './resourceSeeting.global.scss';
 
 const ResourceSeeting = () => {
   const [form] = Form.useForm();
-  const [setting] = useState(db.get('setting'));
+  const [uploadSetting] = useState(db.get('uploadSetting'));
   const [fileList, setFileList] = useState([]);
 
   const onFinish = (values: any) => {
@@ -38,11 +38,11 @@ const ResourceSeeting = () => {
         name="resourceSeetingForm"
         onFinish={onFinish}
         initialValues={{
-          platform: setting.platform || undefined,
-          openWatermark: setting.openWatermark || false,
-          tagId: setting.tagId || 5,
+          platform: uploadSetting?.platform || undefined,
+          openWatermark: uploadSetting?.openWatermark || false,
+          tagId: uploadSetting?.tagId || 5,
         }}
-        onValuesChange={(_, v: any) => db.set('setting', v)}
+        onValuesChange={(_, v: any) => db.set('uploadSetting', v)}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 14 }}
       >

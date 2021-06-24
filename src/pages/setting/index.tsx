@@ -8,7 +8,7 @@ import './setting.global.scss';
 const { Sider, Content } = Layout;
 
 const Setting = () => {
-  const [current, setCurrent] = useState('新消息通知');
+  const [current, setCurrent] = useState('基础设置');
 
   const menu = [
     {

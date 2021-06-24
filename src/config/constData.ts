@@ -1,8 +1,3 @@
-// declare namespace ConstDataType {
-//   tag: { [key: string]: { text: string } };
-//   tagOptions: { value: number | string; label: string; color: string }[];
-// };
-
 const CONSTDATA = {
   tag: {
     'rgb(252,115,110)': { text: '红色' },

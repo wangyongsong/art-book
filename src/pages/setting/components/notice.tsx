@@ -5,9 +5,14 @@ const Notice = () => {
   const noticeList = [
     {
       title: '系统提示',
-      description: '系统消息提示',
+      description: '系统消息推送提示',
       action: [
-        <Switch checkedChildren="开启" unCheckedChildren="关闭" key="1" />,
+        <Switch
+          checkedChildren="开启"
+          unCheckedChildren="关闭"
+          key="1"
+          onChange={(checked) => console.log(`checked`, checked)}
+        />,
       ],
     },
   ];
