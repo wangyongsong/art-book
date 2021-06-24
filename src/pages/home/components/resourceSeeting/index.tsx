@@ -10,12 +10,13 @@ import {
   Popover,
 } from 'antd';
 import { CloudUploadOutlined } from '@ant-design/icons';
+import db from '../../../../db';
 import CONSTDATA from '../../../../config/constData';
 import './resourceSeeting.global.scss';
-import { valueEnumTransformOptions } from '../../../../utils/commonUtils';
 
 const ResourceSeeting = () => {
   const [form] = Form.useForm();
+  const [setting] = useState(db.get('setting'));
   const [fileList, setFileList] = useState([]);
 
   const onFinish = (values: any) => {
@@ -37,18 +38,20 @@ const ResourceSeeting = () => {
         name="resourceSeetingForm"
         onFinish={onFinish}
         initialValues={{
-          openWatermark: false,
-          tag: Object.keys(CONSTDATA.tag)[4],
+          platform: setting.platform || undefined,
+          openWatermark: setting.openWatermark || false,
+          tagId: setting.tagId || 5,
         }}
+        onValuesChange={(_, v: any) => db.set('setting', v)}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 14 }}
       >
         <Form.Item name="platform" label="平台">
           <Select options={[{ label: 'SM.MS', value: 1 }]} />
         </Form.Item>
-        <Form.Item name="tag" label="标签">
+        <Form.Item name="tagId" label="标签">
           <Select>
-            {valueEnumTransformOptions(CONSTDATA.tag).map((item: any) => {
+            {CONSTDATA.tagOptions.map((item: any) => {
               return (
                 <Option value={item.value} label={item.label} key={item.value}>
                   <div className="colorOptionLabelItem">
@@ -56,7 +59,7 @@ const ResourceSeeting = () => {
                       role="img"
                       aria-label={item.label}
                       className="roundItem"
-                      style={{ color: item.value }}
+                      style={{ color: item.color }}
                     >
                       ●{' '}
                     </span>
@@ -67,7 +70,7 @@ const ResourceSeeting = () => {
             })}
           </Select>
         </Form.Item>
-        <Form.Item name="watermark" label="水印" valuePropName="checked">
+        <Form.Item name="openWatermark" label="水印" valuePropName="checked">
           <Switch checkedChildren="开启" unCheckedChildren="关闭" />
         </Form.Item>
         <Form.Item label="进度">

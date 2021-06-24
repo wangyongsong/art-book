@@ -1,5 +1,5 @@
 import React from 'react';
-import Platform from './components/platform';
+// import Platform from './components/platform';
 import ResourceManager from './components/resourceManager';
 import ResourceSeeting from './components/resourceSeeting';
 import './home.global.scss';
@@ -7,9 +7,9 @@ import './home.global.scss';
 const Home = () => {
   return (
     <div className="home">
-      <div className="platform">
+      {/* <div className="platform">
         <Platform />
-      </div>
+      </div> */}
       <div className="resourceManager">
         <ResourceManager />
       </div>

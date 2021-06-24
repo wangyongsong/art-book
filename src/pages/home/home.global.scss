@@ -5,17 +5,17 @@
   height: 100%;
   overflow: hidden;
   user-select: none;
-  .platformContent {
-    width: 150px;
-    height: 100%;
-    overflow-y: scroll;
-    padding: 2px 0;
-    box-sizing: border-box;
-    // user-select: none;
-    color: #ccc;
-    background-color: $ab-bg-color-dark4;
-    outline-color: rgba(83, 89, 93, 0.5);
-  }
+  // .platformContent {
+  //   width: 150px;
+  //   height: 100%;
+  //   overflow-y: scroll;
+  //   padding: 2px 0;
+  //   box-sizing: border-box;
+  //   // user-select: none;
+  //   color: #ccc;
+  //   background-color: $ab-bg-color-dark4;
+  //   outline-color: rgba(83, 89, 93, 0.5);
+  // }
   .resourceManager {
     flex: 1;
     display: flex;

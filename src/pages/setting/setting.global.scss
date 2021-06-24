@@ -1,0 +1,24 @@
+.settingLayout {
+  width: 100%;
+  height: 100%;
+  .settingSide {
+    height: 100%;
+    .settingMenu {
+      height: 100%;
+      user-select: none;
+    }
+  }
+
+  .settingContent {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 8px 40px;
+    .settingContentTitle {
+      margin-bottom: 12px;
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 28px;
+    }
+  }
+}

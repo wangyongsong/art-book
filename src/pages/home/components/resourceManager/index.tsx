@@ -22,6 +22,7 @@ import {
   SmileOutlined,
 } from '@ant-design/icons';
 import './resourceManager.global.scss';
+import { find } from 'lodash';
 import CONSTDATA from '../../../../config/constData';
 
 const plainOptions: any[] = [];
@@ -29,7 +30,7 @@ const plainOptions: any[] = [];
 for (let index = 1; index < 100; index++) {
   plainOptions.push({
     id: index,
-    tag: 'rgb(78,167,251)',
+    tagId: 2,
     createdTime: '2021-12-18 23:58:58',
     src:
       'https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ea16646c40fc45639ff04f44f09bb90d~tplv-k3u1fbpfcp-watermark.image',
@@ -40,7 +41,7 @@ const ResourceManager = () => {
   const [checkedList, setCheckedList] = useState<any[]>([]);
   const [showList, setShowList] = useState<any[]>([]);
   const [current, setCurrent] = useState(1);
-  const [comptedPageSize, setComptedPageSize] = useState(24);
+  const [comptedPageSize, setComptedPageSize] = useState(32);
 
   const checkOnChange = (list: any) => {
     setCheckedList(list);
@@ -76,6 +77,13 @@ const ResourceManager = () => {
   useEffect(() => {
     paginationChange(1);
   }, []);
+
+  const findTagColor = (item: any, name: 'color' | 'label') => {
+    const data: any = find(CONSTDATA.tagOptions, {
+      value: item.tagId,
+    });
+    return data[name];
+  };
 
   const menuOnClick = ({ key }: any) => {
     switch (key) {
@@ -167,14 +175,20 @@ const ResourceManager = () => {
                   />
                   <Checkbox value={item} className="checkbox" />
                   <div className="resourceTool">
-                    <Tooltip title={CONSTDATA.tag[item.tag].text}>
+                    <Tooltip title={findTagColor(item, 'label')}>
                       <div
-                        style={{ background: item.tag }}
+                        style={{
+                          background: findTagColor(item, 'color'),
+                        }}
                         className="resourceItemTag toolIcon"
                       />
                     </Tooltip>
-                    <CopyOutlined className="toolIcon" />
-                    <DeleteOutlined className="toolIcon" />
+                    <Tooltip title="复制链接">
+                      <CopyOutlined className="toolIcon" />
+                    </Tooltip>
+                    <Tooltip title="删除">
+                      <DeleteOutlined className="toolIcon" />
+                    </Tooltip>
                     <Dropdown overlay={pictureMenu}>
                       <EllipsisOutlined className="toolIconLast" />
                     </Dropdown>
