@@ -33,6 +33,15 @@ class DB {
     if (!this.db.has('images').value()) {
       this.db.set('images', []).write();
     }
+    if (!this.db.has('errorImages').value()) {
+      this.db.set('errorImages', []).write();
+    }
+    if (!this.db.has('successImages').value()) {
+      this.db.set('successImages', []).write();
+    }
+    if (!this.db.has('notice').value()) {
+      this.db.set('notice', []).write();
+    }
     if (!this.db.has('uploadSetting').value()) {
       this.db.set('uploadSetting', {}).write();
     }

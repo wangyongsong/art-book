@@ -25,10 +25,12 @@
     box-sizing: border-box;
     cursor: pointer;
   }
-
-  .iconBadge {
+  .iconItem {
     font-size: 24px;
-    color: $ab-text-color-dark2;
+  }
+
+  .ant-badge {
+    color: unset;
   }
 
   .actived {

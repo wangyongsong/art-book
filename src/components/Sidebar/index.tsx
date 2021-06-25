@@ -5,8 +5,10 @@ import {
   AppstoreOutlined,
   HeartOutlined,
   BellOutlined,
+  SyncOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
-import { Tooltip } from 'antd';
+import { Badge, Tooltip } from 'antd';
 import classnames from 'classnames';
 import ConfigurationDrawer from '../Drawer/configurationDrawer';
 import './index.global.scss';
@@ -18,6 +20,7 @@ type SideItem = {
   path?: string;
   icon?: any;
   clickFn?: any;
+  badge?: boolean;
 };
 
 export default function SideBar() {
@@ -56,18 +59,23 @@ export default function SideBar() {
       tooltip: '设置',
       placement: 'down',
       path: '/setting',
+      badge: false,
       // clickFn: () => ConfigurationDrawerRef.current.open(),
-      icon: <SettingOutlined />,
+      icon: <SettingOutlined className="iconItem" />,
     },
     {
       id: 11,
       tooltip: '通知',
       placement: 'down',
-      icon: (
-        // <Badge count={<SyncOutlined spin />}>
-        <BellOutlined />
-        // </Badge>
-      ),
+      badge: false,
+      icon: <BellOutlined className="iconItem" />,
+    },
+    {
+      id: 12,
+      tooltip: '使用教程',
+      placement: 'down',
+      badge: false,
+      icon: <QuestionCircleOutlined className="iconItem" />,
     },
   ];
 
@@ -123,7 +131,7 @@ export default function SideBar() {
                   onClick={() => isActived(item)}
                   aria-hidden="true"
                 >
-                  {item.icon}
+                  <Badge dot={item.badge}>{item.icon}</Badge>
                 </div>
               </Tooltip>
             );

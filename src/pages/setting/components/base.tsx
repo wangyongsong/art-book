@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Button, message } from 'antd';
+import { List, Button } from 'antd';
 import { remote, shell } from 'electron';
 import db from '../../../db';
 

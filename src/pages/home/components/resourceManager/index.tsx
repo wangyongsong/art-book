@@ -27,15 +27,15 @@ import CONSTDATA from '../../../../config/constData';
 
 const plainOptions: any[] = [];
 
-for (let index = 1; index < 100; index++) {
-  plainOptions.push({
-    id: index,
-    tagId: 2,
-    createdTime: '2021-12-18 23:58:58',
-    src:
-      'https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ea16646c40fc45639ff04f44f09bb90d~tplv-k3u1fbpfcp-watermark.image',
-  });
-}
+// for (let index = 1; index < 100; index++) {
+//   plainOptions.push({
+//     id: index,
+//     tagId: 2,
+//     createdTime: '2021-12-18 23:58:58',
+//     src:
+//       'https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ea16646c40fc45639ff04f44f09bb90d~tplv-k3u1fbpfcp-watermark.image',
+//   });
+// }
 
 const ResourceManager = () => {
   const [checkedList, setCheckedList] = useState<any[]>([]);
@@ -198,7 +198,10 @@ const ResourceManager = () => {
             })
           ) : (
             <div className="resourceBoxIsEmpty">
-              <Result icon={<SmileOutlined />} subTitle="您还未上传图片!" />
+              <Result
+                icon={<SmileOutlined />}
+                subTitle="您还未上传图片，快去上传吧!"
+              />
             </div>
           )}
         </Image.PreviewGroup>
