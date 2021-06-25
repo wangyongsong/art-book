@@ -1,25 +1,26 @@
 /* eslint-disable no-plusplus */
 import React, { useEffect, useState } from 'react';
 import {
-  Image,
-  Checkbox,
-  Pagination,
   Menu,
-  Dropdown,
+  Image,
   Button,
-  Tooltip,
   Result,
+  Tooltip,
+  Checkbox,
+  Dropdown,
+  Pagination,
 } from 'antd';
 import {
-  CopyOutlined,
-  EllipsisOutlined,
-  DownOutlined,
   EyeOutlined,
+  CopyOutlined,
   PlusOutlined,
+  DownOutlined,
+  SmileOutlined,
   DeleteOutlined,
+  EllipsisOutlined,
   PlusCircleOutlined,
   CloseCircleOutlined,
-  SmileOutlined,
+  QuestionCircleOutlined,
 } from '@ant-design/icons';
 import './resourceManager.global.scss';
 import { find } from 'lodash';
@@ -200,7 +201,12 @@ const ResourceManager = () => {
             <div className="resourceBoxIsEmpty">
               <Result
                 icon={<SmileOutlined />}
-                subTitle="您还未上传图片，快去上传吧!"
+                title="您还未上传图片，快去上传吧!"
+                subTitle={
+                  <div>
+                    如果初次使用，请先点击左侧的 “ <QuestionCircleOutlined /> ”
+                  </div>
+                }
               />
             </div>
           )}

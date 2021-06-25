@@ -1,19 +1,31 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { List, Button, Avatar } from 'antd';
+import GithubConfigDrawer from '../../../components/Drawer/githubConfigDrawer';
+
 import smmsLogo from '../../../assets/logo/smms-logo.png';
 import githubLogo from '../../../assets/logo/github-logo.png';
 import giteeLogo from '../../../assets/logo/gitee-logo.png';
 import qiniuLogo from '../../../assets/logo/qiniu-logo.png';
+import db from '../../../db';
 
 const Base = () => {
+  const githubConfigDrawerRef: any = useRef();
+  const [accountSetting, setAccountSetting] = useState(
+    db.get('accountSetting')
+  );
+
   const BaseList = [
     {
       title: 'GitHub',
       avatar: githubLogo,
       description: 'GitHub图床配置',
       action: [
-        <Button type="link" key="1" onClick={() => {}}>
-          绑定
+        <Button
+          type="link"
+          key="1"
+          onClick={() => githubConfigDrawerRef.current.open()}
+        >
+          {accountSetting?.github ? '已绑定' : '绑定'}
         </Button>,
       ],
     },
@@ -23,7 +35,7 @@ const Base = () => {
       description: 'Gitee图床配置',
       action: [
         <Button type="link" key="1" onClick={() => {}}>
-          绑定
+          {accountSetting?.gitee ? '已绑定' : '绑定'}
         </Button>,
       ],
     },
@@ -33,7 +45,7 @@ const Base = () => {
       description: '七牛云图床配置',
       action: [
         <Button type="link" key="1" onClick={() => {}}>
-          绑定
+          {accountSetting?.qiniuyun ? '已绑定' : '绑定'}
         </Button>,
       ],
     },
@@ -43,7 +55,7 @@ const Base = () => {
       description: 'SM.MS图床配置',
       action: [
         <Button type="link" key="1" onClick={() => {}}>
-          绑定
+          {accountSetting?.smms ? '已绑定' : '绑定'}
         </Button>,
       ],
     },
@@ -52,7 +64,6 @@ const Base = () => {
   return (
     <>
       <List
-        className="demo-loadmore-list"
         // loading={initLoading}
         itemLayout="horizontal"
         dataSource={BaseList}
@@ -72,6 +83,12 @@ const Base = () => {
             />
           </List.Item>
         )}
+      />
+
+      {/* Drawer */}
+      <GithubConfigDrawer
+        oRef={githubConfigDrawerRef}
+        reloadList={() => setAccountSetting({ ...db.get('accountSetting') })}
       />
     </>
   );

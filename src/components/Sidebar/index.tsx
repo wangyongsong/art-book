@@ -5,12 +5,11 @@ import {
   AppstoreOutlined,
   HeartOutlined,
   BellOutlined,
-  SyncOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
 import { Badge, Tooltip } from 'antd';
 import classnames from 'classnames';
-import ConfigurationDrawer from '../Drawer/configurationDrawer';
+import ConfigurationDrawer from '../Drawer/githubConfigDrawer';
 import './index.global.scss';
 
 type SideItem = {

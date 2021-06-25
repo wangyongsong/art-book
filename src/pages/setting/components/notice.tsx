@@ -20,7 +20,6 @@ const Notice = () => {
   return (
     <>
       <List
-        className="demo-loadmore-list"
         // loading={initLoading}
         itemLayout="horizontal"
         dataSource={noticeList}

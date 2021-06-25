@@ -7,8 +7,9 @@ import './setting.global.scss';
 
 const { Sider, Content } = Layout;
 
-const Setting = () => {
+const Setting = (props: any) => {
   const [current, setCurrent] = useState('基础设置');
+  console.log(`props`, props);
 
   const menu = [
     {

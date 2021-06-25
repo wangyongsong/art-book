@@ -46,7 +46,7 @@ class DB {
       this.db.set('uploadSetting', {}).write();
     }
     if (!this.db.has('accountSetting').value()) {
-      this.db.set('accountSetting', []).write();
+      this.db.set('accountSetting', {}).write();
     }
     if (!this.db.has('baseSetting').value()) {
       this.db.set('baseSetting', {}).write();

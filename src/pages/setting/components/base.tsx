@@ -27,7 +27,6 @@ const Base = () => {
   return (
     <>
       <List
-        className="demo-loadmore-list"
         // loading={initLoading}
         itemLayout="horizontal"
         dataSource={BaseList}

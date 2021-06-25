@@ -31,6 +31,24 @@ const CONSTDATA = {
       color: 'rgb(213,136,252)',
     },
   ],
+  useAccountOptions: [
+    {
+      value: 'github',
+      label: 'GitHub',
+    },
+    {
+      value: 'gitee',
+      label: 'Gitee',
+    },
+    {
+      value: 'qiniuyun',
+      label: '七牛云',
+    },
+    {
+      value: 'smms',
+      label: 'SM.MS',
+    },
+  ],
 };
 
 export default CONSTDATA;
