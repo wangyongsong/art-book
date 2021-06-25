@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { withRouter } from 'react-router-dom';
 import {
   SettingOutlined,
   AppstoreOutlined,
@@ -9,7 +9,6 @@ import {
 } from '@ant-design/icons';
 import { Badge, Tooltip } from 'antd';
 import classnames from 'classnames';
-import ConfigurationDrawer from '../Drawer/githubConfigDrawer';
 import './index.global.scss';
 
 type SideItem = {
@@ -22,17 +21,17 @@ type SideItem = {
   badge?: boolean;
 };
 
-export default function SideBar() {
-  const history = useHistory();
+const SideBar = (props: any) => {
+  const {
+    location: { pathname },
+  } = props;
 
   const [isActivedItem, setisActivedItem] = useState(1);
-  const ConfigurationDrawerRef: any = useRef();
 
   const isActived = (item: SideItem) => {
-    const { pathname } = history.location;
     setisActivedItem(item.id);
-    if (item.path && history.push && pathname !== item.path) {
-      history.push(item.path);
+    if (item.path && props.history.push && pathname !== item.path) {
+      props.history.push(item.path);
     }
     if (item.clickFn) {
       item.clickFn();
@@ -79,12 +78,11 @@ export default function SideBar() {
   ];
 
   useEffect(() => {
-    const { pathname } = history.location;
     const isAct = sideItemList.filter(
       (item: SideItem) => item.path === pathname
     );
     setisActivedItem(isAct[0].id);
-  }, []);
+  }, [pathname]);
 
   return (
     <div className="sidebar flexColumn">
@@ -138,7 +136,8 @@ export default function SideBar() {
           return null;
         })}
       </div>
-      <ConfigurationDrawer oRef={ConfigurationDrawerRef} />
     </div>
   );
-}
+};
+
+export default withRouter(SideBar);

@@ -41,7 +41,7 @@ const ResourceSeeting = () => {
                 message.destroy(msgKey);
                 history.push({
                   pathname: '/setting',
-                  state: { menu: 'account' },
+                  state: { menu: '账号绑定' },
                 });
               }}
               style={{ padding: 0, border: 0 }}

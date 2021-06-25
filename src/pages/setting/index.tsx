@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Menu, Layout } from 'antd';
 import Base from './components/base';
 import Account from './components/account';
@@ -8,8 +8,14 @@ import './setting.global.scss';
 const { Sider, Content } = Layout;
 
 const Setting = (props: any) => {
+  const {
+    location: { state },
+  } = props;
   const [current, setCurrent] = useState('基础设置');
-  console.log(`props`, props);
+
+  useEffect(() => {
+    if (state) setCurrent(state.menu);
+  }, []);
 
   const menu = [
     {
