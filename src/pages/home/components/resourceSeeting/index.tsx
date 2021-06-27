@@ -16,6 +16,7 @@ import db from '../../../../db';
 import CONSTDATA from '../../../../config/constData';
 
 import './resourceSeeting.global.scss';
+import githubUpload from '../../../../core/githubUpload';
 
 const { Option } = Select;
 
@@ -50,7 +51,7 @@ const ResourceSeeting = () => {
             </Button>
           </span>
         ),
-        duration: 15,
+        duration: 10,
         key: msgKey,
       });
     return noAc;
@@ -115,10 +116,6 @@ const ResourceSeeting = () => {
         </Form.Item>
         <div style={{ width: 100, height: 50 }} />
 
-        {/* <Form.Item>
-          <Button type="link">您还未绑定，前往设置配置</Button>
-        </Form.Item> */}
-
         <Row justify="center">
           <Form.Item>
             <Upload
@@ -126,7 +123,8 @@ const ResourceSeeting = () => {
               action=""
               fileList={fileList}
               onChange={(values) => {
-                console.log(`values`, values.file);
+                const { file } = values;
+                githubUpload.getUploadFile(file);
                 // console.log(`form`, form.getFieldsValue());
               }}
             >
@@ -145,6 +143,9 @@ const ResourceSeeting = () => {
               type="primary"
               shape="round"
               disabled={hasAccountDisabled}
+              onClick={() => {
+                githubUpload.getUploadFile();
+              }}
               icon={<CloudUploadOutlined />}
             >
               上传剪切图片

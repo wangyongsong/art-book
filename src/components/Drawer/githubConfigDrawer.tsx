@@ -69,20 +69,20 @@ const GithubConfigDrawer = (props: CType) => {
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
+              name="userName"
+              label="用户名 ( userName )"
+              rules={[{ required: true, message: '请输入用户名' }]}
+            >
+              <Input placeholder="请输入用户名" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
               name="repository"
               label="仓库名称 ( repository )"
               rules={[{ required: true, message: '请输入仓库名称' }]}
             >
               <Input placeholder="请输入仓库名称" />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              name="branch"
-              label="分支名称 ( branch )"
-              rules={[{ required: true, message: '请输入分支名称' }]}
-            >
-              <Input placeholder="请输入分支名称" />
             </Form.Item>
           </Col>
         </Row>
