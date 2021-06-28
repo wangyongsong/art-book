@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import {
   SettingOutlined,
@@ -11,6 +11,7 @@ import { Badge, Tooltip } from 'antd';
 import classnames from 'classnames';
 import './index.global.scss';
 import { isEmpty } from 'lodash';
+import Notice from '../Notice';
 
 type SideItem = {
   id: number;
@@ -28,6 +29,7 @@ const SideBar = (props: any) => {
   } = props;
 
   const [isActivedItem, setisActivedItem] = useState(1);
+  const noticeRef: any = useRef();
 
   const isActived = (item: SideItem) => {
     setisActivedItem(item.id);
@@ -67,6 +69,7 @@ const SideBar = (props: any) => {
       tooltip: '通知',
       placement: 'down',
       badge: false,
+      clickFn: () => noticeRef?.current?.open(),
       icon: <BellOutlined className="iconItem" />,
     },
     {
@@ -139,6 +142,7 @@ const SideBar = (props: any) => {
           return null;
         })}
       </div>
+      <Notice oRef={noticeRef} />
     </div>
   );
 };

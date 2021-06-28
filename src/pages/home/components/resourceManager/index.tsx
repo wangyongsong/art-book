@@ -83,7 +83,6 @@ const ResourceManager = () => {
   }, []);
 
   useEffect(() => {
-    // getImagesCallback();
     paginationChange(current);
   }, [images]);
 
@@ -150,6 +149,11 @@ const ResourceManager = () => {
             </Button>
           </Dropdown>
           {!!checkedList.length && (
+            <Button type="primary" size="small" ghost style={{ marginLeft: 5 }}>
+              批量操作 <DownOutlined />
+            </Button>
+          )}
+          {!!checkedList.length && (
             <span className="selectNum">已选择 {checkedList.length} 项</span>
           )}
         </div>
@@ -188,7 +192,7 @@ const ResourceManager = () => {
             />
           </Form.Item>
           <Form.Item name="createdTime">
-            <DatePicker placeholder="上传时间" allowClear />
+            <DatePicker placeholder="筛选上传时间" allowClear />
           </Form.Item>
         </Form>
       </div>

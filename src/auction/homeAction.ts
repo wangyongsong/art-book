@@ -5,7 +5,7 @@ import db from '../db';
 
 export function getImages(dispatch: Dispatch) {
   const filterImageForm = db.get('filterImageForm');
-  const images = db.get('images');
+  const images = db.get('images').reverse();
   let data: any[] = [];
 
   data = filter(images, (o) => {
