@@ -1,5 +1,5 @@
 /* eslint-disable no-plusplus */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Menu,
@@ -10,6 +10,9 @@ import {
   Checkbox,
   Dropdown,
   Pagination,
+  Form,
+  Select,
+  DatePicker,
 } from 'antd';
 import {
   EyeOutlined,
@@ -24,28 +27,24 @@ import {
   QuestionCircleOutlined,
 } from '@ant-design/icons';
 import './resourceManager.global.scss';
-import { find } from 'lodash';
+import moment from 'moment';
+import { cloneDeep, find } from 'lodash';
 import CONSTDATA from '../../../../config/constData';
+import TagSelect from '../../../../components/Select/tagSelect';
+import db from '../../../../db';
+import { getImages } from '../../../../auction/homeAction';
 
-// const images: any[] = [];
-
-// for (let index = 1; index < 100; index++) {
-//   images.push({
-//     id: index,
-//     tagId: 2,
-//     createdTime: '2021-12-18 23:58:58',
-//     src:
-//       'https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ea16646c40fc45639ff04f44f09bb90d~tplv-k3u1fbpfcp-watermark.image',
-//   });
-// }
 const ResourceManager = () => {
-  const { images } = useSelector((state: any) => state.homeReducer);
   const dispatch = useDispatch();
 
+  const { images } = useSelector((state: any) => state.homeReducer);
+  const filterImageForm = db.get('filterImageForm');
+  const getImagesCallback = useCallback(() => getImages(dispatch), [dispatch]);
   const [checkedList, setCheckedList] = useState<any[]>([]);
   const [showList, setShowList] = useState<any[]>([]);
   const [current, setCurrent] = useState(1);
   const [comptedPageSize, setComptedPageSize] = useState(32);
+  const [form] = Form.useForm();
 
   const checkOnChange = (list: any) => {
     setCheckedList(list);
@@ -79,11 +78,13 @@ const ResourceManager = () => {
   };
 
   useEffect(() => {
+    getImagesCallback();
     paginationChange(1);
   }, []);
 
   useEffect(() => {
-    paginationChange(1);
+    // getImagesCallback();
+    paginationChange(current);
   }, [images]);
 
   const findTagColor = (item: any, name: 'color' | 'label') => {
@@ -152,6 +153,44 @@ const ResourceManager = () => {
             <span className="selectNum">已选择 {checkedList.length} 项</span>
           )}
         </div>
+        <Form
+          form={form}
+          layout="inline"
+          size="small"
+          initialValues={{
+            ...filterImageForm,
+            createdTime: filterImageForm.createdTime
+              ? moment(filterImageForm.createdTime)
+              : null,
+          }}
+          onValuesChange={(_, allValues) => {
+            const data = cloneDeep(allValues);
+            if (data.createdTime) {
+              data.createdTime = data.createdTime.format('YYYY-MM-DD');
+            }
+            db.set('filterImageForm', data);
+            getImagesCallback();
+          }}
+        >
+          <Form.Item name="useAccount">
+            <Select
+              allowClear
+              placeholder="筛选账号"
+              style={{ width: 93 }}
+              options={CONSTDATA.useAccountOptions}
+            />
+          </Form.Item>
+          <Form.Item name="tagId">
+            <TagSelect
+              placeholder="筛选标签"
+              allowClear
+              style={{ width: 93 }}
+            />
+          </Form.Item>
+          <Form.Item name="createdTime">
+            <DatePicker placeholder="上传时间" allowClear />
+          </Form.Item>
+        </Form>
       </div>
 
       {/* body */}

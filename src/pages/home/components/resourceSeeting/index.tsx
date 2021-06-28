@@ -17,10 +17,9 @@ import db from '../../../../db';
 import CONSTDATA from '../../../../config/constData';
 import { getImages } from '../../../../auction/homeAction';
 import githubUpload from '../../../../core/githubUpload';
+import TagSelect from '../../../../components/Select/tagSelect';
 
 import './resourceSeeting.global.scss';
-
-const { Option } = Select;
 
 const ResourceSeeting = () => {
   const dispatch = useDispatch();
@@ -94,25 +93,7 @@ const ResourceSeeting = () => {
           />
         </Form.Item>
         <Form.Item name="tagId" label="标签">
-          <Select>
-            {CONSTDATA.tagOptions.map((item: any) => {
-              return (
-                <Option value={item.value} label={item.label} key={item.value}>
-                  <div className="colorOptionLabelItem">
-                    <span
-                      role="img"
-                      aria-label={item.label}
-                      className="roundItem"
-                      style={{ color: item.color }}
-                    >
-                      ●{' '}
-                    </span>
-                    {item.label}
-                  </div>
-                </Option>
-              );
-            })}
-          </Select>
+          <TagSelect />
         </Form.Item>
         <Form.Item name="openWatermark" label="水印" valuePropName="checked">
           <Switch checkedChildren="开启" unCheckedChildren="关闭" />

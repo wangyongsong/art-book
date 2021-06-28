@@ -55,6 +55,9 @@ class DB {
     if (!this.db.has('dataFilePath').value()) {
       this.db.set('dataFilePath', dataFile).write();
     }
+    if (!this.db.has('filterImageForm').value()) {
+      this.db.set('filterImageForm', {}).write();
+    }
   }
 
   read() {
