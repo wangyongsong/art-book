@@ -2,6 +2,8 @@ import React, { useState, useImperativeHandle } from 'react';
 import { Drawer, Tabs } from 'antd';
 import UploadImageLog from './components/uploadImageLog';
 
+import './index.global.scss';
+
 interface PropsType {
   oRef: any;
 }

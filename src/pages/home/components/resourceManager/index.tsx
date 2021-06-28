@@ -191,7 +191,7 @@ const ResourceManager = () => {
               style={{ width: 93 }}
             />
           </Form.Item>
-          <Form.Item name="createdTime">
+          <Form.Item name="createdTime" noStyle>
             <DatePicker placeholder="筛选上传时间" allowClear />
           </Form.Item>
         </Form>
