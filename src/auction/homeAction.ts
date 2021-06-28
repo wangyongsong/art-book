@@ -1,9 +1,9 @@
 import { Dispatch } from 'redux';
 import homeConstants from '../constants/homeConstants';
 
-export function addTodo(dispatch: Dispatch, data?: any) {
+export function getImages(dispatch: Dispatch, data?: any) {
   dispatch({
-    type: homeConstants.ADD_TODO,
+    type: homeConstants.GET_IMAGES,
     data,
   });
 }

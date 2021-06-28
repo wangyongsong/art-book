@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Button,
   Form,
@@ -10,21 +10,25 @@ import {
   message,
 } from 'antd';
 import { CloudUploadOutlined } from '@ant-design/icons';
-import { cloneDeep } from 'lodash';
+import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { cloneDeep } from 'lodash';
 import db from '../../../../db';
 import CONSTDATA from '../../../../config/constData';
+import { getImages } from '../../../../auction/homeAction';
+import githubUpload from '../../../../core/githubUpload';
 
 import './resourceSeeting.global.scss';
-import githubUpload from '../../../../core/githubUpload';
 
 const { Option } = Select;
 
 const ResourceSeeting = () => {
+  const dispatch = useDispatch();
+
   const [form] = Form.useForm();
   const history = useHistory();
   const [uploadSetting] = useState(db.get('uploadSetting'));
-  const [fileList, setFileList] = useState([]);
+  const [fileList] = useState([]);
   const [hasAccountDisabled, sethasAccountDisabled] = useState<boolean>(true);
 
   const hasAcount = (useAccount: string, prompt = false) => {
@@ -56,6 +60,8 @@ const ResourceSeeting = () => {
       });
     return noAc;
   };
+
+  const getImagesCallback = useCallback(() => getImages(dispatch), [dispatch]);
 
   useEffect(() => {
     const dis = hasAcount(form.getFieldValue('useAccount'));
@@ -124,8 +130,8 @@ const ResourceSeeting = () => {
               fileList={fileList}
               onChange={(values) => {
                 const { file } = values;
-                githubUpload.getUploadFile(file);
-                // console.log(`form`, form.getFieldsValue());
+                githubUpload.getUploadFile(file, form.getFieldsValue());
+                githubUpload.gitubReload(getImagesCallback);
               }}
             >
               <Button
@@ -144,7 +150,7 @@ const ResourceSeeting = () => {
               shape="round"
               disabled={hasAccountDisabled}
               onClick={() => {
-                githubUpload.getUploadFile();
+                // githubUpload.reload(add);
               }}
               icon={<CloudUploadOutlined />}
             >

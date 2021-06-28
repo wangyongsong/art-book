@@ -1,7 +1,7 @@
 import { Button } from 'antd';
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addTodo } from '../../auction/homeAction';
+// import { addTodo } from '../../auction/homeAction';
 import db from '../../db';
 // import '../../db';
 
@@ -9,7 +9,7 @@ const About = (props: any) => {
   const data = useSelector((state: any) => state.homeReducer);
   const dispatch = useDispatch();
 
-  const add = useCallback(() => addTodo(dispatch, { val: 9999 }), [dispatch]);
+  // const add = useCallback(() => addTodo(dispatch, { val: 9999 }), [dispatch]);
 
   return (
     <div>

@@ -1,6 +1,7 @@
 import { UploadFile } from 'antd/lib/upload/interface';
 import axios, { AxiosInstance } from 'axios';
 import fs from 'fs-extra';
+import moment from 'moment';
 import db from '../db';
 
 type GithubConfType = {
@@ -13,9 +14,13 @@ type GithubConfType = {
 class GithubUpload {
   file: any;
 
+  formData: any;
+
   githubAxios!: AxiosInstance;
 
   githubConf!: GithubConfType;
+
+  imageReload: any;
 
   constructor() {
     this.githubAxiosConf();
@@ -38,33 +43,53 @@ class GithubUpload {
     });
   }
 
-  getUploadFile(value?: UploadFile<any>) {
-    this.file = value?.originFileObj;
+  getUploadFile(value: UploadFile<any>, formData: any) {
+    this.file = value.originFileObj;
+    this.formData = formData;
     if (!this.file) return;
     this.putGithubFile();
   }
 
   putGithubFile() {
     this.getGithubConf();
-    const { githubConf, file } = this;
-
+    const {
+      githubConf: { userName, repository, storagePath = '' },
+      file,
+      formData: { tagId, useAccount },
+    } = this;
+    const uploadTime = moment().format('YYYY-MM-DD hh:mm:ss');
+    const timestamp = new Date().getTime();
+    const fileName = `${timestamp}-${file.name}`;
     this.githubAxios
       .put(
-        `/repos/${githubConf.userName}/${githubConf.repository}/contents/${githubConf.storagePath}${file.name}`,
+        `/repos/${userName}/${repository}/contents/${storagePath}${fileName}`,
         {
-          message: `time: ${new Date()}&from: ArtBook`,
+          message: `上传时间: ${uploadTime} & 上传方式: ArtBook`,
           content: Buffer.from(fs.readFileSync(this.file.path)).toString(
             'base64'
           ),
         }
       )
-      .then((res) => {
-        console.log(`res`, res);
+      .then((res: any) => {
+        const { status, data } = res;
+        if (status === 201) {
+          db.insert('images', {
+            tagId,
+            useAccount,
+            src: data.content.download_url,
+            createdTime: uploadTime,
+          });
+          this.imageReload();
+        }
         return null;
       })
       .catch((err) => {
         console.log(`err`, err);
       });
+  }
+
+  gitubReload(fn: any) {
+    this.imageReload = fn;
   }
 }
 

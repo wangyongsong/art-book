@@ -1,5 +1,6 @@
 /* eslint-disable no-plusplus */
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Menu,
   Image,
@@ -26,10 +27,10 @@ import './resourceManager.global.scss';
 import { find } from 'lodash';
 import CONSTDATA from '../../../../config/constData';
 
-const plainOptions: any[] = [];
+// const images: any[] = [];
 
 // for (let index = 1; index < 100; index++) {
-//   plainOptions.push({
+//   images.push({
 //     id: index,
 //     tagId: 2,
 //     createdTime: '2021-12-18 23:58:58',
@@ -37,8 +38,10 @@ const plainOptions: any[] = [];
 //       'https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ea16646c40fc45639ff04f44f09bb90d~tplv-k3u1fbpfcp-watermark.image',
 //   });
 // }
-
 const ResourceManager = () => {
+  const { images } = useSelector((state: any) => state.homeReducer);
+  const dispatch = useDispatch();
+
   const [checkedList, setCheckedList] = useState<any[]>([]);
   const [showList, setShowList] = useState<any[]>([]);
   const [current, setCurrent] = useState(1);
@@ -72,12 +75,16 @@ const ResourceManager = () => {
   const paginationChange = (page: number) => {
     setCurrent(page);
     const sum = computedElement();
-    setShowList([...plainOptions.slice((page - 1) * sum, page * sum)]);
+    setShowList([...images.slice((page - 1) * sum, page * sum)]);
   };
 
   useEffect(() => {
     paginationChange(1);
   }, []);
+
+  useEffect(() => {
+    paginationChange(1);
+  }, [images]);
 
   const findTagColor = (item: any, name: 'color' | 'label') => {
     const data: any = find(CONSTDATA.tagOptions, {
@@ -92,7 +99,7 @@ const ResourceManager = () => {
         setCheckedList([...showList]);
         break;
       case '2':
-        setCheckedList([...plainOptions]);
+        setCheckedList([...images]);
         break;
       case '3':
         setCheckedList([]);
@@ -217,7 +224,7 @@ const ResourceManager = () => {
       <div className="resourceManagerFooter">
         <Pagination
           simple
-          total={plainOptions.length}
+          total={images.length}
           size="small"
           pageSize={comptedPageSize}
           current={current}

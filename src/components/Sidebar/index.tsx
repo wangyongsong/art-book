@@ -10,6 +10,7 @@ import {
 import { Badge, Tooltip } from 'antd';
 import classnames from 'classnames';
 import './index.global.scss';
+import { isEmpty } from 'lodash';
 
 type SideItem = {
   id: number;
@@ -81,7 +82,9 @@ const SideBar = (props: any) => {
     const isAct = sideItemList.filter(
       (item: SideItem) => item.path === pathname
     );
-    setisActivedItem(isAct[0].id);
+    if (!isEmpty(isAct)) {
+      setisActivedItem(isAct[0].id);
+    }
   }, [pathname]);
 
   return (

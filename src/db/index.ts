@@ -10,6 +10,7 @@ import { join } from 'path';
 const APP = process.type === 'renderer' ? remote.app : app;
 const USERDATA_PATH = APP.getPath('userData');
 const dataFile = join(USERDATA_PATH, './data.json');
+// const imagesFile = join(USERDATA_PATH, './imageFile');
 
 console.log(`dataFile`, dataFile);
 
