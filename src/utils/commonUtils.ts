@@ -24,7 +24,7 @@ export function valueEnumTransformOptions(
 }
 
 /**
- * 一键复制
+ * @description: 一键复制
  */
 export function copy(text: string) {
   const textArea = document.createElement('textarea');
@@ -47,7 +47,35 @@ export function copy(text: string) {
 }
 
 /**
- * api接口 message
+ * @description: url转换 + 复制
+ */
+export function urlTransform(
+  url: any[],
+  type: 'url' | 'markdown' | 'html',
+  copyable = true
+) {
+  let str = '';
+  switch (type) {
+    case 'url':
+      str = url.map((item) => item.src).join(' ');
+      break;
+    case 'markdown':
+      str = url.map((item) => `![${item.path}](${item.src})`).join(' ');
+      break;
+    case 'html':
+      str = url
+        .map((item) => `<img src="${item.src}" alt="${item.path}"/>`)
+        .join(' ');
+      break;
+    default:
+      break;
+  }
+  if (copyable) copy(str);
+  return str;
+}
+
+/**
+ * @description: api接口 message
  */
 export function apiMessage(
   uploadTime: string,
@@ -64,6 +92,9 @@ export function apiMessage(
   }
 }
 
+/**
+ * @description: Image的URL转base64
+ */
 export async function imgUrlToBase64(url: string | https.RequestOptions | URL) {
   let base64Img;
   return new Promise(function (resolve) {

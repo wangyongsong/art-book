@@ -1,9 +1,8 @@
-import { message } from 'antd';
 import { RcFile } from 'antd/lib/upload';
 import fs from 'fs-extra';
 import moment from 'moment';
 import db from '../../db';
-import { apiMessage, imgUrlToBase64 } from '../../utils/commonUtils';
+import { apiMessage } from '../../utils/commonUtils';
 import request from './githubAxios';
 
 /**

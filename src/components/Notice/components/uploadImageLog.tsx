@@ -67,7 +67,7 @@ const UploadImageLog = (props: Props) => {
                       <CloseCircleOutlined className="typeColor typeColorError" />
                     )
                   }
-                  title={item.success ? '上传成功' : '上传失败'}
+                  title={item.title || '通知'}
                   description={
                     <Typography.Text
                       style={{ width: '80%' }}

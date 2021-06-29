@@ -34,6 +34,7 @@ import TagSelect from '../../../../components/Select/tagSelect';
 import db from '../../../../db';
 import { getImages } from '../../../../auction/homeAction';
 import githubUpload from '../../../../core/github/githubUpload';
+import { urlTransform } from '../../../../utils/commonUtils';
 
 const ResourceManager = () => {
   const dispatch = useDispatch();
@@ -81,6 +82,7 @@ const ResourceManager = () => {
   useEffect(() => {
     getImagesCallback();
     paginationChange(1);
+    githubUpload.gitubReload(getImagesCallback);
   }, []);
 
   useEffect(() => {
@@ -124,16 +126,9 @@ const ResourceManager = () => {
     </Menu>
   );
 
-  const pictureMenu = (
-    <Menu onClick={() => {}}>
-      <Menu.Item key="1" icon={<CopyOutlined />}>
-        生成 HTML 链接
-      </Menu.Item>
-      <Menu.Item key="2" icon={<CopyOutlined />}>
-        生成 MarkDown 链接
-      </Menu.Item>
-    </Menu>
-  );
+  // const pictureMenu = (
+
+  // );
 
   return (
     <div className="resourceManagerContent">
@@ -236,7 +231,12 @@ const ResourceManager = () => {
                       />
                     </Tooltip>
                     <Tooltip title="复制链接">
-                      <CopyOutlined className="toolIcon" />
+                      <CopyOutlined
+                        className="toolIcon"
+                        onClick={() => {
+                          urlTransform([item], 'url');
+                        }}
+                      />
                     </Tooltip>
                     <Tooltip title="删除">
                       <DeleteOutlined
@@ -246,7 +246,31 @@ const ResourceManager = () => {
                         }}
                       />
                     </Tooltip>
-                    <Dropdown overlay={pictureMenu}>
+                    <Dropdown
+                      overlay={
+                        <Menu
+                          onClick={(info) => {
+                            switch (info.key) {
+                              case 'html':
+                                urlTransform([item], 'html');
+                                break;
+                              case 'markdown':
+                                urlTransform([item], 'markdown');
+                                break;
+                              default:
+                                break;
+                            }
+                          }}
+                        >
+                          <Menu.Item key="html" icon={<CopyOutlined />}>
+                            生成 HTML 链接
+                          </Menu.Item>
+                          <Menu.Item key="markdown" icon={<CopyOutlined />}>
+                            生成 MarkDown 链接
+                          </Menu.Item>
+                        </Menu>
+                      }
+                    >
                       <EllipsisOutlined className="toolIconLast" />
                     </Dropdown>
                   </div>

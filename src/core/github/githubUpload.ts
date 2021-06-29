@@ -38,6 +38,7 @@ class GithubUpload {
           });
           this.imageReload();
           this.insertUploadImagesLog(
+            '上传成功',
             `${originFileObj.name} ${uploadTime}`,
             true
           );
@@ -54,6 +55,7 @@ class GithubUpload {
         } = err;
         const errorMsg = `(${status} ${msg})(${config.url})`;
         this.insertUploadImagesLog(
+          '上传失败',
           `${originFileObj.name} ${uploadTime} ${errorMsg}`,
           false
         );
@@ -63,15 +65,20 @@ class GithubUpload {
   deleteGithubFile(item: any) {
     const deleteTime = moment().format('YYYY-MM-DD hh:mm:ss');
     const { path, sha } = item;
-    const that = this;
-    if (!path && !sha) {
+    const { imageReload, insertUploadImagesLog } = this;
+
+    if (!path || !sha) {
       Modal.confirm({
         title: '缺少删除远程文件的参数',
         content: '确定删除文件吗，如果确定，将只会删除本地记录',
         onOk() {
           db.removeById('images', item.id);
-          // that.imageReload();
-          // that.insertUploadImagesLog(`${item.path} ${deleteTime}`, true);
+          imageReload();
+          insertUploadImagesLog(
+            '删除本地图片成功',
+            `${item.path} ${deleteTime}`,
+            true
+          );
         },
       });
       return;
@@ -81,7 +88,11 @@ class GithubUpload {
         if (res.status === 200) {
           db.removeById('images', item.id);
           this.imageReload();
-          this.insertUploadImagesLog(`${item.path} ${deleteTime}`, true);
+          this.insertUploadImagesLog(
+            '删除成功',
+            `${item.path} ${deleteTime}`,
+            true
+          );
         }
         return res;
       })
@@ -95,6 +106,7 @@ class GithubUpload {
         } = err;
         const errorMsg = `(${status} ${msg})(${config.url})`;
         this.insertUploadImagesLog(
+          '删除失败',
           `${item.path} ${deleteTime} ${errorMsg}`,
           false
         );
@@ -105,8 +117,9 @@ class GithubUpload {
     this.imageReload = fn;
   }
 
-  insertUploadImagesLog(description: string, success: boolean) {
+  insertUploadImagesLog(title: string, description: string, success: boolean) {
     db.insert('uploadImagesLog', {
+      title,
       success,
       description,
       read: false,
