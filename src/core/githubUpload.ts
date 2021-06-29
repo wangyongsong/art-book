@@ -1,4 +1,4 @@
-import { UploadFile } from 'antd/lib/upload/interface';
+import { RcFile, UploadFile } from 'antd/lib/upload/interface';
 import axios, { AxiosInstance } from 'axios';
 import fs from 'fs-extra';
 import moment from 'moment';
@@ -34,38 +34,39 @@ class GithubUpload {
   githubAxiosConf() {
     this.getGithubConf();
     const baseURL = 'https://api.github.com';
-    this.githubAxios = axios.create({
+    const request = axios.create({
       baseURL,
       headers: {
         Authorization: `token ${this.githubConf.accessToken}`,
         'Content-Type': 'application/json',
       },
     });
+
+    this.githubAxios = request;
   }
 
   getUploadFile(value: UploadFile<any>, formData: any) {
     this.file = value.originFileObj;
     this.formData = formData;
-    if (!this.file) return;
-    this.putGithubFile();
+    if (!value.originFileObj) return;
+    this.putGithubFile(value.originFileObj);
   }
 
-  putGithubFile() {
-    this.getGithubConf();
+  putGithubFile(originFileObj: RcFile) {
+    this.githubAxiosConf();
     const {
       githubConf: { userName, repository, storagePath = '' },
-      file,
       formData: { tagId, useAccount },
     } = this;
     const uploadTime = moment().format('YYYY-MM-DD hh:mm:ss');
     const timestamp = new Date().getTime();
-    const fileName = `${timestamp}-${file.name}`;
+    const fileName = `${timestamp}-${originFileObj.name}`;
     this.githubAxios
       .put(
         `/repos/${userName}/${repository}/contents/${storagePath}${fileName}`,
         {
           message: `上传时间: ${uploadTime} & 上传方式: ArtBook`,
-          content: Buffer.from(fs.readFileSync(this.file.path)).toString(
+          content: Buffer.from(fs.readFileSync(originFileObj.path)).toString(
             'base64'
           ),
         }
@@ -80,16 +81,37 @@ class GithubUpload {
             createdTime: uploadTime,
           });
           this.imageReload();
+          this.insertUploadImagesLog(`${fileName} ${uploadTime}`, true);
         }
-        return null;
+        return res;
       })
       .catch((err) => {
-        console.log(`err`, err);
+        const {
+          response: {
+            data: { message },
+            status,
+            config,
+          },
+        } = err;
+        const errorMsg = `(${status} ${message})(${config.url})`;
+        this.insertUploadImagesLog(
+          `${originFileObj.name} ${uploadTime} ${errorMsg}`,
+          false
+        );
       });
   }
 
   gitubReload(fn: any) {
     this.imageReload = fn;
+  }
+
+  insertUploadImagesLog(description: string, success: boolean) {
+    const { file } = this;
+    db.insert('uploadImagesLog', {
+      success,
+      description,
+      read: false,
+    });
   }
 }
 

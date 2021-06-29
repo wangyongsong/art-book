@@ -21,7 +21,7 @@ if (process.type !== 'renderer') {
 }
 
 class DB {
-  private db: Datastore.LowdbSync<Datastore.AdapterSync>;
+  private db: any;
 
   constructor() {
     const adapter = new FileSync(dataFile);
@@ -74,7 +74,6 @@ class DB {
   }
 
   insert(key: string, value: any): void {
-    // @ts-ignore
     return this.read().get(key).insert(value).write();
   }
 
@@ -83,13 +82,23 @@ class DB {
   }
 
   getById(key: string, id: string) {
-    // @ts-ignore
     return this.read().get(key).getById(id).value();
   }
 
   removeById(key: string, id: string) {
-    // @ts-ignore
     return this.read().get(key).removeById(id).write();
+  }
+
+  modidyById(
+    key: string,
+    filters: { [key: string]: any },
+    value: { [key: string]: any }
+  ) {
+    return this.read().get(key).find(filters).assign(value).write();
+  }
+
+  find(key: string, filters: { [key: string]: any }) {
+    return this.read().get(key).find(filters).value();
   }
 }
 
