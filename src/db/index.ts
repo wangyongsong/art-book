@@ -73,6 +73,10 @@ class DB {
     return this.read().has(key).value();
   }
 
+  find(key: string, filters: { [key: string]: any }) {
+    return this.read().get(key).find(filters).value();
+  }
+
   insert(key: string, value: any): void {
     return this.read().get(key).insert(value).write();
   }
@@ -89,16 +93,16 @@ class DB {
     return this.read().get(key).removeById(id).write();
   }
 
-  modidyById(
+  modidyById(key: string, id: string, value: any) {
+    return this.read().get(key).getById(id).assign(value).write();
+  }
+
+  modidyByFilter(
     key: string,
     filters: { [key: string]: any },
     value: { [key: string]: any }
   ) {
     return this.read().get(key).find(filters).assign(value).write();
-  }
-
-  find(key: string, filters: { [key: string]: any }) {
-    return this.read().get(key).find(filters).value();
   }
 }
 

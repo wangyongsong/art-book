@@ -33,6 +33,7 @@ import CONSTDATA from '../../../../config/constData';
 import TagSelect from '../../../../components/Select/tagSelect';
 import db from '../../../../db';
 import { getImages } from '../../../../auction/homeAction';
+import githubUpload from '../../../../core/github/githubUpload';
 
 const ResourceManager = () => {
   const dispatch = useDispatch();
@@ -238,7 +239,12 @@ const ResourceManager = () => {
                       <CopyOutlined className="toolIcon" />
                     </Tooltip>
                     <Tooltip title="删除">
-                      <DeleteOutlined className="toolIcon" />
+                      <DeleteOutlined
+                        className="toolIcon"
+                        onClick={() => {
+                          githubUpload.deleteGithubFile(item);
+                        }}
+                      />
                     </Tooltip>
                     <Dropdown overlay={pictureMenu}>
                       <EllipsisOutlined className="toolIconLast" />

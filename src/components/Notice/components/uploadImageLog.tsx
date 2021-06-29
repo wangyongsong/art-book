@@ -29,7 +29,7 @@ const UploadImageLog = (props: Props) => {
 
   const setRead = (item: any) => {
     if (item.read) return;
-    db.modidyById('uploadImagesLog', { id: item.id }, { read: true });
+    db.modidyByFilter('uploadImagesLog', { id: item.id }, { read: true });
     getUploadImageLog(false, false);
   };
 

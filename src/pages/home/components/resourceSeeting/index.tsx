@@ -16,7 +16,7 @@ import { cloneDeep } from 'lodash';
 import db from '../../../../db';
 import CONSTDATA from '../../../../config/constData';
 import { getImages } from '../../../../auction/homeAction';
-import githubUpload from '../../../../core/githubUpload';
+import githubUpload from '../../../../core/github/githubUpload';
 import TagSelect from '../../../../components/Select/tagSelect';
 
 import './resourceSeeting.global.scss';

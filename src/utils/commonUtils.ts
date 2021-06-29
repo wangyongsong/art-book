@@ -1,5 +1,16 @@
-// key value 转换 options
-export function valueEnumTransformOptions(valueEnum: any, valueType?: string) {
+/* eslint-disable func-names */
+import { message } from 'antd';
+import https from 'https';
+import { URL } from 'url';
+
+/**
+ *  @description: key value 转换 options
+ *  @param: valueEnum
+ */
+export function valueEnumTransformOptions(
+  valueEnum: any,
+  valueType?: 'number' | 'string'
+) {
   const options: any = [];
   Object.keys(valueEnum).map((i) => {
     options.push({
@@ -12,28 +23,66 @@ export function valueEnumTransformOptions(valueEnum: any, valueType?: string) {
   return options;
 }
 
-export function SecondToDate(second_time: number) {
-  let date = '';
-  date = `${parseInt(`${second_time}`, 10) || '0'}秒`;
-  if (parseInt(`${second_time}`, 10) > 60) {
-    const second = parseInt(`${second_time}`, 10) % 60;
-    let min = parseInt(`${second_time / 60}`, 10);
-    date = `${min}分${second}秒`;
+/**
+ * 一键复制
+ */
+export function copy(text: string) {
+  const textArea = document.createElement('textarea');
+  textArea.value = text;
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
 
-    if (min > 60) {
-      min = parseInt(`${second_time / 60}`, 10) % 60;
-      let hour = parseInt(`${parseInt(`${second_time / 60}`, 10) / 60}`, 10);
-      date = `${hour}小时${min}分${second}秒`;
-
-      if (hour > 24) {
-        hour = parseInt(`${parseInt(`${second_time / 60}`, 10) / 60}`, 10) % 24;
-        const day = parseInt(
-          `${parseInt(`${parseInt(`${second_time / 60}`, 10) / 60}`, 10) / 24}`,
-          10
-        );
-        date = `${day}天${hour}小时${min}分${second}秒`;
-      }
+  try {
+    const successful = document.execCommand('copy');
+    if (successful === true) {
+      message.success('复制成功！');
+    } else {
+      message.warning('该设备不支持点击复制到剪贴板');
     }
+  } catch (err) {
+    message.warning('该设备不支持点击复制到剪贴板');
   }
-  return date;
+  document.body.removeChild(textArea);
+}
+
+/**
+ * api接口 message
+ */
+export function apiMessage(
+  uploadTime: string,
+  type: 'upload' | 'delete' = 'upload'
+) {
+  const str = '';
+  switch (type) {
+    case 'upload':
+      return `上传时间: ${uploadTime} & 上传方式: ArtBook`;
+    case 'delete':
+      return `删除时间: ${uploadTime} & 删除方式: ArtBook`;
+    default:
+      return str;
+  }
+}
+
+export async function imgUrlToBase64(url: string | https.RequestOptions | URL) {
+  let base64Img;
+  return new Promise(function (resolve) {
+    const req = https.get(url, function (res) {
+      const chunks: any[] = [];
+      let size = 0;
+      res.on('data', function (chunk) {
+        chunks.push(chunk);
+        size += chunk.length; // 累加缓冲数据的长度
+      });
+      res.on('end', function () {
+        const data = Buffer.concat(chunks, size);
+        base64Img = data.toString('base64');
+        resolve({ success: true, base64Img });
+      });
+    });
+    req.on('error', (e) => {
+      resolve({ success: false, errmsg: e.message });
+    });
+    req.end();
+  });
 }
