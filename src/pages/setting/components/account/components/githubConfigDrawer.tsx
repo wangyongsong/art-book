@@ -1,12 +1,15 @@
 import React, { useState, useImperativeHandle, useEffect } from 'react';
 import { Button, Col, Drawer, Form, Input, Row, message } from 'antd';
-import db from '../../db';
-import { storagePathReg, noBlank } from '../../utils/regUtils';
+import db from '../../../../../db';
+import { storagePathReg } from '../../../../../utils/regUtils';
 
 type CType = {
   oRef: any;
   reloadList: any;
 };
+
+const ACCOUNTSETTING_GITHUB = 'accountSetting.github';
+const GITHUB = 'GitHub';
 
 const GithubConfigDrawer = (props: CType) => {
   const { oRef, reloadList } = props;
@@ -23,15 +26,15 @@ const GithubConfigDrawer = (props: CType) => {
   }));
 
   const onFinish = (values: any) => {
-    db.set('accountSetting.github', values);
+    db.set(ACCOUNTSETTING_GITHUB, values);
     close();
-    message.success('GitHub配置成功');
+    message.success(`${GITHUB}配置成功`);
     reloadList();
   };
 
   useEffect(() => {
     if (visible) {
-      const githubData = db.get('accountSetting.github');
+      const githubData = db.get(ACCOUNTSETTING_GITHUB);
       if (githubData) {
         form.setFieldsValue({ ...githubData });
       }
@@ -41,7 +44,7 @@ const GithubConfigDrawer = (props: CType) => {
   return (
     <Drawer
       width={435}
-      title="GitHub - 账户配置"
+      title={`${GITHUB} - 账户配置`}
       placement="right"
       onClose={close}
       visible={visible}

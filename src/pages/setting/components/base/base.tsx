@@ -1,7 +1,7 @@
 import React from 'react';
 import { List, Button } from 'antd';
 import { remote, shell } from 'electron';
-import db from '../../../db';
+import db from '../../../../db';
 
 const Base = () => {
   const BaseList = [

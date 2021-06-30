@@ -1,21 +1,21 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { List, Button, Avatar } from 'antd';
-import GithubConfigDrawer from '../../../components/Drawer/githubConfigDrawer';
-import GiteeConfigDrawer from '../../../components/Drawer/giteeConfigDrawer';
+import GithubConfigDrawer from './components/githubConfigDrawer';
+import GiteeConfigDrawer from './components/giteeConfigDrawer';
 
-import smmsLogo from '../../../assets/logo/smms-logo.png';
-import githubLogo from '../../../assets/logo/github-logo.png';
-import giteeLogo from '../../../assets/logo/gitee-logo.png';
-import qiniuLogo from '../../../assets/logo/qiniu-logo.png';
-import db from '../../../db';
+import smmsLogo from '../../../../assets/logo/smms-logo.png';
+import githubLogo from '../../../../assets/logo/github-logo.png';
+import giteeLogo from '../../../../assets/logo/gitee-logo.png';
+import qiniuLogo from '../../../../assets/logo/qiniu-logo.png';
+import useGetDB from '../../../../hooks/useGetDB';
 
 const Base = () => {
   const githubConfigDrawerRef: any = useRef();
   const giteeConfigDrawerRef: any = useRef();
-
-  const [accountSetting, setAccountSetting] = useState(
-    db.get('accountSetting')
-  );
+  const {
+    dbData: accountSettingDB,
+    getNewDBData: getNewAccountSettingDB,
+  } = useGetDB('accountSetting');
 
   const BaseList = [
     {
@@ -28,7 +28,7 @@ const Base = () => {
           key="1"
           onClick={() => githubConfigDrawerRef.current.open()}
         >
-          {accountSetting?.github ? '已绑定' : '绑定'}
+          {accountSettingDB?.github ? '已绑定' : '绑定'}
         </Button>,
       ],
     },
@@ -42,7 +42,7 @@ const Base = () => {
           key="1"
           onClick={() => giteeConfigDrawerRef.current.open()}
         >
-          {accountSetting?.gitee ? '已绑定' : '绑定'}
+          {accountSettingDB?.gitee ? '已绑定' : '绑定'}
         </Button>,
       ],
     },
@@ -52,7 +52,7 @@ const Base = () => {
       description: '七牛云图床配置',
       action: [
         <Button type="link" key="1" onClick={() => {}}>
-          {accountSetting?.qiniuyun ? '已绑定' : '绑定'}
+          {accountSettingDB?.qiniuyun ? '已绑定' : '绑定'}
         </Button>,
       ],
     },
@@ -62,7 +62,7 @@ const Base = () => {
       description: 'SM.MS图床配置',
       action: [
         <Button type="link" key="1" onClick={() => {}}>
-          {accountSetting?.smms ? '已绑定' : '绑定'}
+          {accountSettingDB?.smms ? '已绑定' : '绑定'}
         </Button>,
       ],
     },
@@ -95,12 +95,12 @@ const Base = () => {
       {/* Drawer */}
       <GithubConfigDrawer
         oRef={githubConfigDrawerRef}
-        reloadList={() => setAccountSetting({ ...db.get('accountSetting') })}
+        reloadList={getNewAccountSettingDB}
       />
 
       <GiteeConfigDrawer
         oRef={giteeConfigDrawerRef}
-        reloadList={() => setAccountSetting({ ...db.get('accountSetting') })}
+        reloadList={getNewAccountSettingDB}
       />
     </>
   );

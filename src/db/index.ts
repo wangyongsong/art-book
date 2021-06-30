@@ -55,6 +55,9 @@ class DB {
     if (!this.db.has('filterImageForm').value()) {
       this.db.set('filterImageForm', {}).write();
     }
+    if (!this.db.has('useUploadForm').value()) {
+      this.db.set('useUploadForm', {}).write();
+    }
   }
 
   read() {

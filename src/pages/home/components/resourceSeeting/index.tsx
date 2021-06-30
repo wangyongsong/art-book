@@ -32,7 +32,7 @@ const ResourceSeeting = () => {
 
   const [form] = Form.useForm();
   const history = useHistory();
-  const [uploadSetting] = useState(db.get('uploadSetting'));
+  const [useUploadForm] = useState(db.get('useUploadForm'));
   const [fileList] = useState([]);
   const [hasAccountDisabled, sethasAccountDisabled] = useState<boolean>(true);
   const { commonUploadImage } = useUploadCore();
@@ -80,15 +80,15 @@ const ResourceSeeting = () => {
         form={form}
         name="resourceSeetingForm"
         initialValues={{
-          useAccount: uploadSetting?.useAccount,
-          openWatermark: uploadSetting?.openWatermark || false,
-          tagId: uploadSetting?.tagId || 5,
+          useAccount: useUploadForm?.useAccount,
+          openWatermark: useUploadForm?.openWatermark || false,
+          tagId: useUploadForm?.tagId || 5,
         }}
         onValuesChange={(_, v: any) => {
           const { useAccount } = v;
           const data = cloneDeep(v);
           if (hasAcount(useAccount)) delete data.useAccount;
-          db.set('uploadSetting', data);
+          db.set('useUploadForm', data);
         }}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 14 }}

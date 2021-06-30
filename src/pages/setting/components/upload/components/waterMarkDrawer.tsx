@@ -1,14 +1,17 @@
 import React, { useState, useImperativeHandle, useEffect } from 'react';
 import { Button, Col, Drawer, Form, Input, Row, message } from 'antd';
-import db from '../../db';
-import { storagePathReg } from '../../utils/regUtils';
+
+import { storagePathReg } from '../../../../../utils/regUtils';
+import db from '../../../../../db';
 
 type CType = {
   oRef: any;
   reloadList: any;
 };
 
-const GiteeConfigDrawer = (props: CType) => {
+const UPLOADSETTING_WATERMARK = 'uploadSetting.watermark';
+
+const WaterMarkDrawer = (props: CType) => {
   const { oRef, reloadList } = props;
   const [visible, setVisible] = useState(false);
   const [form] = Form.useForm();
@@ -23,15 +26,15 @@ const GiteeConfigDrawer = (props: CType) => {
   }));
 
   const onFinish = (values: any) => {
-    db.set('accountSetting.gitee', values);
+    db.set(UPLOADSETTING_WATERMARK, values);
     close();
-    message.success('Gitee配置成功');
+    message.success('水印配置成功');
     reloadList();
   };
 
   useEffect(() => {
     if (visible) {
-      const giteeData = db.get('accountSetting.gitee');
+      const giteeData = db.get(UPLOADSETTING_WATERMARK);
       if (giteeData) {
         form.setFieldsValue({ ...giteeData });
       }
@@ -41,7 +44,7 @@ const GiteeConfigDrawer = (props: CType) => {
   return (
     <Drawer
       width={435}
-      title="Gitee - 账户配置"
+      title="水印配置"
       placement="right"
       onClose={close}
       visible={visible}
@@ -128,4 +131,4 @@ const GiteeConfigDrawer = (props: CType) => {
   );
 };
 
-export default GiteeConfigDrawer;
+export default WaterMarkDrawer;

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Menu, Layout } from 'antd';
-import Base from './components/base';
-import Account from './components/account';
-import Notice from './components/notice';
+import Base from './components/base/base';
+import Upload from './components/upload/upload';
+import Account from './components/account/account';
+import Notice from './components/notice/notice';
+
 import './setting.global.scss';
 
 const { Sider, Content } = Layout;
@@ -23,12 +25,16 @@ const Setting = (props: any) => {
       components: <Base key="1" />,
     },
     {
+      title: '上传设置',
+      components: <Upload key="2" />,
+    },
+    {
       title: '账号绑定',
-      components: <Account key="2" />,
+      components: <Account key="3" />,
     },
     {
       title: '新消息通知',
-      components: <Notice key="3" />,
+      components: <Notice key="4" />,
     },
   ];
 

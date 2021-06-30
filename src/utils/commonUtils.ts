@@ -2,6 +2,7 @@
 import { message } from 'antd';
 import { RcFile } from 'antd/lib/upload';
 import { clipboard } from 'electron';
+import textToSVG from 'text-to-svg';
 import fs from 'fs-extra';
 import https from 'https';
 import { URL } from 'url';
@@ -146,13 +147,11 @@ export function getClipboardContents(): FileToBase64Type {
   const returnData = { base64: '', name: '' };
   try {
     const image: any = clipboard.readImage();
-    console.log(`image`, image);
 
     if (image.isEmpty()) {
       message.warning('未获取到剪切板内容');
       return returnData;
     }
-
     const base64 = Buffer.from(image.toPNG(), 'binary').toString('base64');
 
     return {
@@ -183,4 +182,43 @@ export function fileToBase64(file: RcFile): FileToBase64Type {
     message.error(error);
     return { base64: '', name: '' };
   }
+}
+
+/**
+ * @description: 图片水印
+ * @param  { Sharp } sharpImage 原图
+ * @param  { String } watermarkRaw 水印图片
+ * @param  { top } 水印距图片上边缘距离
+ * @param  { left } 水印距图片左边缘距离
+ */
+export async function watermark(
+  sharpImage: any,
+  { watermarkRaw, top, left }: any
+) {
+  const watermarkImg = await watermarkRaw.toBuffer();
+  return sharpImage.overlayWith(watermarkImg, { top, left });
+}
+
+/**
+ * @description: 文字水印
+ * @param  { Sharp  } image
+ * @param  { String } text 待粘贴文字
+ * @param  { Number } fontSize 文字大小
+ * @param  { String } color 文字颜色
+ * @param  { Number } left 文字距图片左边缘距离
+ * @param  { Number } top 文字距图片上边缘距离
+ */
+export async function pasteText(
+  image: any,
+  { text, fontSize, color, left, top }: any
+) {
+  const textSVG = textToSVG.loadSync();
+  const attributes = { fill: color };
+  const options: any = {
+    fontSize,
+    anchor: 'top',
+    attributes,
+  };
+  const svg = Buffer.from(textSVG.getSVG(text, options));
+  return image.overlayWith(svg, { left, top });
 }

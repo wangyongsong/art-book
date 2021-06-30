@@ -269,7 +269,9 @@
     "redux": "^4.1.0",
     "redux-thunk": "^2.3.0",
     "regenerator-runtime": "^0.13.5",
-    "source-map-support": "^0.5.19"
+    "sharp": "^0.28.3",
+    "source-map-support": "^0.5.19",
+    "text-to-svg": "^3.1.5"
   },
   "devEngines": {
     "node": ">=10.x",
