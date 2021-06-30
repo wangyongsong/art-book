@@ -1,8 +1,8 @@
 /* eslint-disable class-methods-use-this */
 import { Modal } from 'antd';
-import { RcFile } from 'antd/lib/upload/interface';
 import moment from 'moment';
 import db from '../../db';
+import { FileToBase64Type } from '../../utils/commonUtils';
 import { githubDeleteFile, githubPutFileAPI } from './githubAPI';
 
 const USEACCOUNT_GITHUB = 'github';
@@ -15,15 +15,9 @@ class GithubUpload {
 
   imageReload: any;
 
-  getUploadFile(file: RcFile, formData: any) {
-    this.file = file;
-    if (!file) return;
-    this.putGithubFile(file, formData);
-  }
-
-  async putGithubFile(originFileObj: RcFile, formData: { tagId: any }) {
+  async putGithubFile(base64File: FileToBase64Type, formData: { tagId: any }) {
     const uploadTime = moment().format('YYYY-MM-DD hh:mm:ss');
-    await githubPutFileAPI({ originFileObj, uploadTime })
+    await githubPutFileAPI({ base64File, uploadTime })
       .then((res: any) => {
         const {
           status,
@@ -41,7 +35,7 @@ class GithubUpload {
           this.imageReload();
           this.insertUploadImagesLog(
             '上传成功',
-            `${originFileObj.name} ${uploadTime}`,
+            `${base64File.name} ${uploadTime}`,
             true
           );
         }
@@ -58,7 +52,7 @@ class GithubUpload {
         const errorMsg = `(${status} ${msg})(${config.url})`;
         this.insertUploadImagesLog(
           '上传失败',
-          `${originFileObj.name} ${uploadTime} ${errorMsg}`,
+          `${base64File.name} ${uploadTime} ${errorMsg}`,
           false
         );
       });

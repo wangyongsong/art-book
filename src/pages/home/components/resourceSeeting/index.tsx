@@ -22,6 +22,10 @@ import useUploadCore from '../../../../core/uploadCore';
 import TagSelect from '../../../../components/Select/tagSelect';
 
 import './resourceSeeting.global.scss';
+import {
+  fileToBase64,
+  getClipboardContents,
+} from '../../../../utils/commonUtils';
 
 const ResourceSeeting = () => {
   const dispatch = useDispatch();
@@ -113,9 +117,14 @@ const ResourceSeeting = () => {
               action=""
               multiple
               fileList={fileList}
-              onChange={({ file }: UploadChangeParam) => {
+              onChange={({ file: { originFileObj } }: UploadChangeParam) => {
+                if (!originFileObj) {
+                  message.error('获取源文件失败！');
+                  return;
+                }
                 const formData = form.getFieldsValue();
-                commonUploadImage(file.originFileObj, formData);
+                const base64File = fileToBase64(originFileObj);
+                commonUploadImage(base64File, formData);
               }}
             >
               <Button
@@ -134,7 +143,10 @@ const ResourceSeeting = () => {
               shape="round"
               disabled={hasAccountDisabled}
               onClick={() => {
-                // githubUpload.reload(add);
+                const formData = form.getFieldsValue();
+                const base64File = getClipboardContents();
+                if (!base64File.base64) return;
+                commonUploadImage(base64File, formData);
               }}
               icon={<CloudUploadOutlined />}
             >

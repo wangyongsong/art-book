@@ -1,31 +1,27 @@
-import { RcFile } from 'antd/lib/upload';
-import fs from 'fs-extra';
 import moment from 'moment';
 import db from '../../db';
-import { apiMessage } from '../../utils/commonUtils';
+import { apiMessage, FileToBase64Type } from '../../utils/commonUtils';
 import request from './giteeAxios';
 
 /**
  * @description: 创建文件
  */
 export function giteePostFileAPI(params: {
-  originFileObj: RcFile;
+  base64File: FileToBase64Type;
   uploadTime: string;
 }) {
-  const { originFileObj, uploadTime } = params;
+  const { base64File, uploadTime } = params;
   const { userName, repository, storagePath = '', accessToken } =
     db.get('accountSetting.gitee') || {};
   const timestamp = new Date().getTime();
-  const fileName = `${moment(timestamp).valueOf()}-${originFileObj.name}`;
+  const fileName = `${moment(timestamp).valueOf()}-${base64File.name}`;
   return request({
     method: 'POST',
     url: `/repos/${userName}/${repository}/contents/${storagePath}${fileName}`,
     data: {
       access_token: accessToken,
       message: apiMessage(uploadTime),
-      content: Buffer.from(fs.readFileSync(originFileObj.path)).toString(
-        'base64'
-      ),
+      content: base64File.base64,
     },
   });
 }
@@ -34,14 +30,14 @@ export function giteePostFileAPI(params: {
  * @description: 更新文件
  */
 export function giteePutFileAPI(params: {
-  originFileObj: RcFile;
+  base64File: FileToBase64Type;
   uploadTime: string;
 }) {
-  const { originFileObj, uploadTime } = params;
+  const { base64File, uploadTime } = params;
   const { userName, repository, storagePath = '', accessToken } =
     db.get('accountSetting.gitee') || {};
   const timestamp = new Date().getTime();
-  const fileName = `${moment(timestamp).valueOf()}-${originFileObj.name}`;
+  const fileName = `${moment(timestamp).valueOf()}-${base64File.name}`;
 
   return request({
     method: 'PUT',
@@ -49,9 +45,7 @@ export function giteePutFileAPI(params: {
     data: {
       access_token: accessToken,
       message: apiMessage(uploadTime),
-      content: Buffer.from(fs.readFileSync(originFileObj.path)).toString(
-        'base64'
-      ),
+      content: base64File.base64,
     },
   });
 }

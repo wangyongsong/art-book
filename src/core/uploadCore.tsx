@@ -1,32 +1,32 @@
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { message } from 'antd';
-import { RcFile } from 'antd/lib/upload';
 import { getImages } from '../auction/homeAction';
 import githubUpload from './github/githubUpload';
 import giteeUpload from './gitee/giteeUpload';
+import { FileToBase64Type } from '../utils/commonUtils';
 
 const useUploadCore = () => {
   const dispatch = useDispatch();
   const getImagesCallback = useCallback(() => getImages(dispatch), [dispatch]);
 
   const commonUploadImage = (
-    file: RcFile | undefined,
+    base64File: FileToBase64Type,
     form: { useAccount: any; tagId: string }
   ) => {
     const { useAccount } = form;
-    if (!file) {
+    if (!base64File) {
       message.error('获取文件失败！');
       return;
     }
     message.info('正在上传文件，请等候...');
     switch (useAccount) {
       case 'github':
-        githubUpload.putGithubFile(file, form);
+        githubUpload.putGithubFile(base64File, form);
         githubUpload.reload(getImagesCallback);
         break;
       case 'gitee':
-        giteeUpload.postGiteeFile(file, form);
+        giteeUpload.postGiteeFile(base64File, form);
         giteeUpload.reload(getImagesCallback);
         break;
       default:

@@ -1,5 +1,8 @@
 /* eslint-disable func-names */
 import { message } from 'antd';
+import { RcFile } from 'antd/lib/upload';
+import { clipboard } from 'electron';
+import fs from 'fs-extra';
 import https from 'https';
 import { URL } from 'url';
 
@@ -70,7 +73,9 @@ export function urlTransform(
     default:
       break;
   }
-  if (copyable) copy(str);
+  // if (copyable) copy(str);
+  if (copyable) clipboard.write({ text: str });
+
   return str;
 }
 
@@ -132,4 +137,50 @@ export function singleMessage(
     content,
     duration,
   });
+}
+
+/**
+ * @description: 剪切板内容
+ */
+export function getClipboardContents(): FileToBase64Type {
+  const returnData = { base64: '', name: '' };
+  try {
+    const image: any = clipboard.readImage();
+    console.log(`image`, image);
+
+    if (image.isEmpty()) {
+      message.warning('未获取到剪切板内容');
+      return returnData;
+    }
+
+    const base64 = Buffer.from(image.toPNG(), 'binary').toString('base64');
+
+    return {
+      name: `${new Date().getTime()}-剪切板图片.png`,
+      base64,
+    };
+  } catch (error) {
+    message.error(`剪贴板数据无法转图片! ${error}`);
+    return returnData;
+  }
+}
+
+export type FileToBase64Type = {
+  base64: string;
+  name: string;
+};
+
+/**
+ * @description: file转换base64
+ */
+export function fileToBase64(file: RcFile): FileToBase64Type {
+  try {
+    return {
+      base64: Buffer.from(fs.readFileSync(file.path)).toString('base64'),
+      name: file.name,
+    };
+  } catch (error) {
+    message.error(error);
+    return { base64: '', name: '' };
+  }
 }

@@ -1,8 +1,8 @@
 /* eslint-disable class-methods-use-this */
 import { Modal } from 'antd';
-import { RcFile } from 'antd/lib/upload/interface';
 import moment from 'moment';
 import db from '../../db';
+import { FileToBase64Type } from '../../utils/commonUtils';
 import { giteeDeleteFile, giteePostFileAPI, giteePutFileAPI } from './giteeAPI';
 
 const USEACCOUNT_GITEE = 'gitee';
@@ -15,15 +15,9 @@ class GiteeUpload {
 
   imageReload: any;
 
-  getUploadFile(file: RcFile, formData: any) {
-    this.file = file;
-    if (!file) return;
-    this.putGiteeFile(file, formData);
-  }
-
-  async postGiteeFile(originFileObj: RcFile, formData: { tagId: any }) {
+  async postGiteeFile(base64File: FileToBase64Type, formData: { tagId: any }) {
     const uploadTime = moment().format('YYYY-MM-DD hh:mm:ss');
-    await giteePostFileAPI({ originFileObj, uploadTime })
+    await giteePostFileAPI({ base64File, uploadTime })
       .then((res: any) => {
         const {
           status,
@@ -41,7 +35,7 @@ class GiteeUpload {
           this.imageReload();
           this.insertUploadImagesLog(
             '上传成功',
-            `${originFileObj.name} ${uploadTime}`,
+            `${base64File.name} ${uploadTime}`,
             true
           );
         }
@@ -58,15 +52,15 @@ class GiteeUpload {
         const errorMsg = `(${status} ${msg})(${config.url})`;
         this.insertUploadImagesLog(
           '上传失败',
-          `${originFileObj.name} ${uploadTime} ${errorMsg}`,
+          `${base64File.name} ${uploadTime} ${errorMsg}`,
           false
         );
       });
   }
 
-  async putGiteeFile(originFileObj: RcFile, formData: { tagId: any }) {
+  async putGiteeFile(base64File: FileToBase64Type, formData: { tagId: any }) {
     const uploadTime = moment().format('YYYY-MM-DD hh:mm:ss');
-    await giteePutFileAPI({ originFileObj, uploadTime })
+    await giteePutFileAPI({ base64File, uploadTime })
       .then((res: any) => {
         const {
           status,
@@ -84,7 +78,7 @@ class GiteeUpload {
           this.imageReload();
           this.insertUploadImagesLog(
             '更新成功',
-            `${originFileObj.name} ${uploadTime}`,
+            `${base64File.name} ${uploadTime}`,
             true
           );
         }
@@ -101,7 +95,7 @@ class GiteeUpload {
         const errorMsg = `(${status} ${msg})(${config.url})`;
         this.insertUploadImagesLog(
           '更新失败',
-          `${originFileObj.name} ${uploadTime} ${errorMsg}`,
+          `${base64File.name} ${uploadTime} ${errorMsg}`,
           false
         );
       });
