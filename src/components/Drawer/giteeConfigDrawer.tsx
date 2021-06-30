@@ -1,14 +1,14 @@
 import React, { useState, useImperativeHandle, useEffect } from 'react';
 import { Button, Col, Drawer, Form, Input, Row, message } from 'antd';
 import db from '../../db';
-import { storagePathReg, noBlank } from '../../utils/regUtils';
+import { storagePathReg } from '../../utils/regUtils';
 
 type CType = {
   oRef: any;
   reloadList: any;
 };
 
-const GithubConfigDrawer = (props: CType) => {
+const GiteeConfigDrawer = (props: CType) => {
   const { oRef, reloadList } = props;
   const [visible, setVisible] = useState(false);
   const [form] = Form.useForm();
@@ -23,17 +23,17 @@ const GithubConfigDrawer = (props: CType) => {
   }));
 
   const onFinish = (values: any) => {
-    db.set('accountSetting.github', values);
+    db.set('accountSetting.gitee', values);
     close();
-    message.success('GitHub配置成功');
+    message.success('Gitee配置成功');
     reloadList();
   };
 
   useEffect(() => {
     if (visible) {
-      const githubData = db.get('accountSetting.github');
-      if (githubData) {
-        form.setFieldsValue({ ...githubData });
+      const giteeData = db.get('accountSetting.gitee');
+      if (giteeData) {
+        form.setFieldsValue({ ...giteeData });
       }
     }
   }, [visible]);
@@ -41,7 +41,7 @@ const GithubConfigDrawer = (props: CType) => {
   return (
     <Drawer
       width={435}
-      title="GitHub - 账户配置"
+      title="Gitee - 账户配置"
       placement="right"
       onClose={close}
       visible={visible}
@@ -128,4 +128,4 @@ const GithubConfigDrawer = (props: CType) => {
   );
 };
 
-export default GithubConfigDrawer;
+export default GiteeConfigDrawer;

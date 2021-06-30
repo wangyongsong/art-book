@@ -3,12 +3,12 @@ import { Modal } from 'antd';
 import { RcFile } from 'antd/lib/upload/interface';
 import moment from 'moment';
 import db from '../../db';
-import { githubDeleteFile, githubPutFileAPI } from './githubAPI';
+import { giteeDeleteFile, giteePostFileAPI, giteePutFileAPI } from './giteeAPI';
 
-const USEACCOUNT_GITHUB = 'github';
+const USEACCOUNT_GITEE = 'gitee';
 const IMAGES = 'images';
 
-class GithubUpload {
+class GiteeUpload {
   file: any;
 
   formData: any;
@@ -18,12 +18,12 @@ class GithubUpload {
   getUploadFile(file: RcFile, formData: any) {
     this.file = file;
     if (!file) return;
-    this.putGithubFile(file, formData);
+    this.putGiteeFile(file, formData);
   }
 
-  async putGithubFile(originFileObj: RcFile, formData: { tagId: any }) {
+  async postGiteeFile(originFileObj: RcFile, formData: { tagId: any }) {
     const uploadTime = moment().format('YYYY-MM-DD hh:mm:ss');
-    await githubPutFileAPI({ originFileObj, uploadTime })
+    await giteePostFileAPI({ originFileObj, uploadTime })
       .then((res: any) => {
         const {
           status,
@@ -32,7 +32,7 @@ class GithubUpload {
         if (status === 201) {
           db.insert(IMAGES, {
             tagId: formData.tagId,
-            useAccount: USEACCOUNT_GITHUB,
+            useAccount: USEACCOUNT_GITEE,
             sha: content.sha,
             path: content.path,
             src: content.download_url,
@@ -64,7 +64,50 @@ class GithubUpload {
       });
   }
 
-  async deleteGithubFile(item: any) {
+  async putGiteeFile(originFileObj: RcFile, formData: { tagId: any }) {
+    const uploadTime = moment().format('YYYY-MM-DD hh:mm:ss');
+    await giteePutFileAPI({ originFileObj, uploadTime })
+      .then((res: any) => {
+        const {
+          status,
+          data: { content },
+        } = res;
+        if (status === 201) {
+          db.insert(IMAGES, {
+            tagId: formData.tagId,
+            useAccount: USEACCOUNT_GITEE,
+            sha: content.sha,
+            path: content.path,
+            src: content.download_url,
+            createdTime: uploadTime,
+          });
+          this.imageReload();
+          this.insertUploadImagesLog(
+            '更新成功',
+            `${originFileObj.name} ${uploadTime}`,
+            true
+          );
+        }
+        return res;
+      })
+      .catch((err) => {
+        const {
+          response: {
+            data: { message: msg },
+            status,
+            config,
+          },
+        } = err;
+        const errorMsg = `(${status} ${msg})(${config.url})`;
+        this.insertUploadImagesLog(
+          '更新失败',
+          `${originFileObj.name} ${uploadTime} ${errorMsg}`,
+          false
+        );
+      });
+  }
+
+  async deleteGiteeFile(item: any) {
     const deleteTime = moment().format('YYYY-MM-DD hh:mm:ss');
     const { path, sha } = item;
     const { imageReload, insertUploadImagesLog } = this;
@@ -85,7 +128,7 @@ class GithubUpload {
       });
       return;
     }
-    await githubDeleteFile({ item, deleteTime })
+    await giteeDeleteFile({ item, deleteTime })
       .then((res) => {
         if (res.status === 200) {
           db.removeById(IMAGES, item.id);
@@ -129,4 +172,4 @@ class GithubUpload {
   }
 }
 
-export default new GithubUpload();
+export default new GiteeUpload();

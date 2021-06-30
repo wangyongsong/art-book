@@ -117,3 +117,19 @@ export async function imgUrlToBase64(url: string | https.RequestOptions | URL) {
     req.end();
   });
 }
+
+/**
+ * @description: 唯一的message消息提示
+ */
+export function singleMessage(
+  type: 'success' | 'warning' | 'info' | 'error',
+  singleKey: string,
+  content: any,
+  duration = 3
+) {
+  message[type]({
+    key: singleKey,
+    content,
+    duration,
+  });
+}

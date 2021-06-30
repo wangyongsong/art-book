@@ -12,11 +12,13 @@ import {
 import { CloudUploadOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { UploadChangeParam } from 'antd/lib/upload';
 import { cloneDeep } from 'lodash';
 import db from '../../../../db';
 import CONSTDATA from '../../../../config/constData';
-import { getImages } from '../../../../auction/homeAction';
-import githubUpload from '../../../../core/github/githubUpload';
+// import { getImages } from '../../../../auction/homeAction';
+// import githubUpload from '../../../../core/github/githubUpload';
+import useUploadCore from '../../../../core/uploadCore';
 import TagSelect from '../../../../components/Select/tagSelect';
 
 import './resourceSeeting.global.scss';
@@ -29,6 +31,7 @@ const ResourceSeeting = () => {
   const [uploadSetting] = useState(db.get('uploadSetting'));
   const [fileList] = useState([]);
   const [hasAccountDisabled, sethasAccountDisabled] = useState<boolean>(true);
+  const { commonUploadImage } = useUploadCore();
 
   const hasAcount = (useAccount: string, prompt = false) => {
     const noAc = !db.get(`accountSetting.${useAccount}`);
@@ -60,7 +63,7 @@ const ResourceSeeting = () => {
     return noAc;
   };
 
-  const getImagesCallback = useCallback(() => getImages(dispatch), [dispatch]);
+  // const getImagesCallback = useCallback(() => getImages(dispatch), [dispatch]);
 
   useEffect(() => {
     const dis = hasAcount(form.getFieldValue('useAccount'));
@@ -108,11 +111,11 @@ const ResourceSeeting = () => {
             <Upload
               name="file"
               action=""
+              multiple
               fileList={fileList}
-              onChange={(values) => {
-                const { file } = values;
-                githubUpload.getUploadFile(file, form.getFieldsValue());
-                githubUpload.gitubReload(getImagesCallback);
+              onChange={({ file }: UploadChangeParam) => {
+                const formData = form.getFieldsValue();
+                commonUploadImage(file.originFileObj, formData);
               }}
             >
               <Button

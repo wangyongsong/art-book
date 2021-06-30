@@ -35,6 +35,8 @@ import db from '../../../../db';
 import { getImages } from '../../../../auction/homeAction';
 import githubUpload from '../../../../core/github/githubUpload';
 import { urlTransform } from '../../../../utils/commonUtils';
+import imageError from '../../../../assets/general/noNetWork.svg';
+import useDeleteCore from '../../../../core/deleteCore';
 
 const ResourceManager = () => {
   const dispatch = useDispatch();
@@ -46,6 +48,7 @@ const ResourceManager = () => {
   const [showList, setShowList] = useState<any[]>([]);
   const [current, setCurrent] = useState(1);
   const [comptedPageSize, setComptedPageSize] = useState(32);
+  const { confirmDeleteImage } = useDeleteCore();
   const [form] = Form.useForm();
 
   const checkOnChange = (list: any) => {
@@ -82,7 +85,7 @@ const ResourceManager = () => {
   useEffect(() => {
     getImagesCallback();
     paginationChange(1);
-    githubUpload.gitubReload(getImagesCallback);
+    githubUpload.reload(getImagesCallback);
   }, []);
 
   useEffect(() => {
@@ -209,6 +212,7 @@ const ResourceManager = () => {
                     height={60}
                     src={item.src}
                     className="resourceImage"
+                    fallback={imageError}
                     preview={{
                       mask: (
                         <div className="previewImgText">
@@ -233,17 +237,13 @@ const ResourceManager = () => {
                     <Tooltip title="复制链接">
                       <CopyOutlined
                         className="toolIcon"
-                        onClick={() => {
-                          urlTransform([item], 'url');
-                        }}
+                        onClick={() => urlTransform([item], 'url')}
                       />
                     </Tooltip>
                     <Tooltip title="删除">
                       <DeleteOutlined
                         className="toolIcon"
-                        onClick={() => {
-                          githubUpload.deleteGithubFile(item);
-                        }}
+                        onClick={() => confirmDeleteImage([item])}
                       />
                     </Tooltip>
                     <Dropdown

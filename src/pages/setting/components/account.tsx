@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { List, Button, Avatar } from 'antd';
 import GithubConfigDrawer from '../../../components/Drawer/githubConfigDrawer';
+import GiteeConfigDrawer from '../../../components/Drawer/giteeConfigDrawer';
 
 import smmsLogo from '../../../assets/logo/smms-logo.png';
 import githubLogo from '../../../assets/logo/github-logo.png';
@@ -10,6 +11,8 @@ import db from '../../../db';
 
 const Base = () => {
   const githubConfigDrawerRef: any = useRef();
+  const giteeConfigDrawerRef: any = useRef();
+
   const [accountSetting, setAccountSetting] = useState(
     db.get('accountSetting')
   );
@@ -34,7 +37,11 @@ const Base = () => {
       avatar: giteeLogo,
       description: 'Gitee图床配置',
       action: [
-        <Button type="link" key="1" onClick={() => {}}>
+        <Button
+          type="link"
+          key="1"
+          onClick={() => giteeConfigDrawerRef.current.open()}
+        >
           {accountSetting?.gitee ? '已绑定' : '绑定'}
         </Button>,
       ],
@@ -88,6 +95,11 @@ const Base = () => {
       {/* Drawer */}
       <GithubConfigDrawer
         oRef={githubConfigDrawerRef}
+        reloadList={() => setAccountSetting({ ...db.get('accountSetting') })}
+      />
+
+      <GiteeConfigDrawer
+        oRef={giteeConfigDrawerRef}
         reloadList={() => setAccountSetting({ ...db.get('accountSetting') })}
       />
     </>
