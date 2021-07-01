@@ -49,6 +49,13 @@ const CONSTDATA = {
       label: 'SM.MS',
     },
   ],
+  colorOptions: [
+    { label: '深空灰', value: '#535c68' },
+    { label: '淡雅灰', value: '#ced6e0' },
+    { label: '浅粉色', value: '#ff7979' },
+    { label: '天空蓝', value: '#7ed6df' },
+    { label: '红色', value: 'red' },
+  ],
 };
 
 export default CONSTDATA;

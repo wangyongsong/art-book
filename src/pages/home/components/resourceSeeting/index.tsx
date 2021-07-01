@@ -23,7 +23,9 @@ import TagSelect from '../../../../components/Select/tagSelect';
 
 import './resourceSeeting.global.scss';
 import {
+  fileHandle,
   fileToBase64,
+  FileToBase64Type,
   getClipboardContents,
 } from '../../../../utils/commonUtils';
 
@@ -123,8 +125,20 @@ const ResourceSeeting = () => {
                   return;
                 }
                 const formData = form.getFieldsValue();
-                const base64File = fileToBase64(originFileObj);
-                commonUploadImage(base64File, formData);
+                // const base64File = fileToBase64(originFileObj, formData);
+                // commonUploadImage(base64File, formData);
+                const base64File = fileHandle(originFileObj, formData);
+                base64File?.then((base64: any) => {
+                  if (!base64) return null;
+                  commonUploadImage(
+                    {
+                      base64,
+                      name: originFileObj.name,
+                    },
+                    formData
+                  );
+                  return null;
+                });
               }}
             >
               <Button
@@ -159,6 +173,7 @@ const ResourceSeeting = () => {
               shape="round"
               disabled={hasAccountDisabled}
               icon={<CloudUploadOutlined />}
+              onClick={() => {}}
             >
               上传在线图片
             </Button>

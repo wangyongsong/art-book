@@ -12,7 +12,7 @@ const Base = () => {
 
   const BaseList = [
     {
-      title: '水印设置',
+      title: '水印配置',
       description: '关于上传图片的水印配置',
       action: [
         <Button
@@ -20,16 +20,16 @@ const Base = () => {
           key="1"
           onClick={() => waterMarkDrawerRef.current.open()}
         >
-          {uploadSettingData?.watermark ? '编辑' : '添加'}
+          {uploadSettingData?.watermark ? '已配置' : '添加'}
         </Button>,
       ],
     },
     {
-      title: '压缩设置',
+      title: '压缩配置',
       description: '关于上传图片的压缩配置',
       action: [
         <Button type="link" key="1" onClick={() => {}}>
-          {uploadSettingData?.compression ? '编辑' : '添加'}
+          {uploadSettingData?.compression ? '已配置' : '添加'}
         </Button>,
       ],
     },

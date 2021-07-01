@@ -16,7 +16,7 @@ class GiteeUpload {
   imageReload: any;
 
   async postGiteeFile(base64File: FileToBase64Type, formData: { tagId: any }) {
-    const uploadTime = moment().format('YYYY-MM-DD hh:mm:ss');
+    const uploadTime = moment().format('YYYY-MM-DD HH:mm:ss');
     await giteePostFileAPI({ base64File, uploadTime })
       .then((res: any) => {
         const {
@@ -59,7 +59,7 @@ class GiteeUpload {
   }
 
   async putGiteeFile(base64File: FileToBase64Type, formData: { tagId: any }) {
-    const uploadTime = moment().format('YYYY-MM-DD hh:mm:ss');
+    const uploadTime = moment().format('YYYY-MM-DD HH:mm:ss');
     await giteePutFileAPI({ base64File, uploadTime })
       .then((res: any) => {
         const {
@@ -102,7 +102,7 @@ class GiteeUpload {
   }
 
   async deleteGiteeFile(item: any) {
-    const deleteTime = moment().format('YYYY-MM-DD hh:mm:ss');
+    const deleteTime = moment().format('YYYY-MM-DD HH:mm:ss');
     const { path, sha } = item;
     const { imageReload, insertUploadImagesLog } = this;
 

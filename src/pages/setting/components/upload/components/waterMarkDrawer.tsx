@@ -1,8 +1,19 @@
 import React, { useState, useImperativeHandle, useEffect } from 'react';
-import { Button, Col, Drawer, Form, Input, Row, message } from 'antd';
-
-import { storagePathReg } from '../../../../../utils/regUtils';
+import {
+  Button,
+  Col,
+  Drawer,
+  Form,
+  Input,
+  Row,
+  message,
+  Select,
+  InputNumber,
+} from 'antd';
 import db from '../../../../../db';
+import ColorSelect from '../../../../../components/Select/colorSelect';
+import CONSTDATA from '../../../../../config/constData';
+import { pasteText } from '../../../../../utils/commonUtils';
 
 type CType = {
   oRef: any;
@@ -27,16 +38,30 @@ const WaterMarkDrawer = (props: CType) => {
 
   const onFinish = (values: any) => {
     db.set(UPLOADSETTING_WATERMARK, values);
+    pasteText({
+      text: values.text,
+      fontSize: values.fontSize,
+      color: values.color,
+    })
+      .then((value) => {
+        db.set('waterMarkSVG', value);
+        message.success(`水印配置成功`);
+        return true;
+      })
+      .catch((err) => {
+        console.error(`文字转svg图片失败`, err);
+        message.error('文字转svg出错，配置失败');
+      });
+
     close();
-    message.success('水印配置成功');
     reloadList();
   };
 
   useEffect(() => {
     if (visible) {
-      const giteeData = db.get(UPLOADSETTING_WATERMARK);
-      if (giteeData) {
-        form.setFieldsValue({ ...giteeData });
+      const data = db.get(UPLOADSETTING_WATERMARK);
+      if (data) {
+        form.setFieldsValue({ ...data });
       }
     }
   }, [visible]);
@@ -65,64 +90,93 @@ const WaterMarkDrawer = (props: CType) => {
         form={form}
         layout="vertical"
         initialValues={{
-          branch: 'main',
-          repository: 'ArtBookFigureBed',
+          waterMarkType: 'text',
+          fontSize: 14,
+          color: CONSTDATA.colorOptions[0].value,
+          right: 10,
+          bottom: 10,
         }}
         onFinish={onFinish}
       >
         <Row gutter={16}>
           <Col span={12}>
             <Form.Item
-              name="userName"
-              label="用户名"
+              name="waterMarkType"
+              label="水印方式"
               rules={[{ required: true }]}
             >
-              <Input placeholder="请输入用户名" />
+              <Select
+                options={[
+                  { label: '自定义文字', value: 'text' },
+                  { label: '自定义图片', value: 'pic' },
+                ]}
+                placeholder="请选择水印方式"
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
-              name="repository"
-              label="仓库名称"
+              name="text"
+              label="水印内容"
               rules={[{ required: true }]}
             >
-              <Input placeholder="请输入仓库名称" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={16}>
-          <Col span={24}>
-            <Form.Item
-              name="accessToken"
-              label="访问令牌 ( access token ) "
-              rules={[
-                {
-                  required: true,
-                },
-              ]}
-            >
-              <Input.Password placeholder="请输入访问令牌" />
-            </Form.Item>
-          </Col>
-        </Row>
-        <Row gutter={16}>
-          <Col span={12}>
-            <Form.Item
-              name="storagePath"
-              label="指定存储路径"
-              tooltip="例如: images/"
-              rules={[
-                {
-                  validator: storagePathReg,
-                },
-              ]}
-            >
-              <Input placeholder="例如: images/" />
+              <Input placeholder="请输入水印内容" />
             </Form.Item>
           </Col>
           <Col span={12}>
-            <Form.Item name="domainName" label="自定义域名">
-              <Input placeholder="例如: https://xxxx.com" />
+            <Form.Item
+              name="fontSize"
+              label="文字大小"
+              rules={[{ required: true }]}
+            >
+              <InputNumber
+                placeholder="请输入文字大小"
+                min={9}
+                max={50}
+                // formatter={(value) => `${value}px`}
+                // parser={(value: any) => value.replace('px', '')}
+                style={{ width: '100%' }}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="color"
+              label="文字颜色"
+              rules={[{ required: true }]}
+            >
+              <ColorSelect
+                options={CONSTDATA.colorOptions}
+                placeholder="请选择文字颜色"
+              />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="right"
+              label="文字距图片右边缘距离"
+              rules={[{ required: true }]}
+            >
+              <InputNumber
+                placeholder="请输入距离"
+                min={-10000}
+                max={10000}
+                style={{ width: '100%' }}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="bottom"
+              label="文字距图片下边缘距离"
+              rules={[{ required: true }]}
+            >
+              <InputNumber
+                placeholder="请输入距离"
+                min={-10000}
+                max={10000}
+                style={{ width: '100%' }}
+              />
             </Form.Item>
           </Col>
         </Row>

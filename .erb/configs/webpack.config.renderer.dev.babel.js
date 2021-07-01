@@ -209,6 +209,8 @@ export default merge(baseConfig, {
         test: /\.(?:ico|gif|png|jpg|jpeg|webp)$/,
         use: 'url-loader',
       },
+      // { test: /\.ts$/, loader: "ts-loader" },
+      // { test: /\.node$/, use: "node-loader"}
     ],
   },
   plugins: [

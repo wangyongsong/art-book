@@ -16,7 +16,7 @@ class GithubUpload {
   imageReload: any;
 
   async putGithubFile(base64File: FileToBase64Type, formData: { tagId: any }) {
-    const uploadTime = moment().format('YYYY-MM-DD hh:mm:ss');
+    const uploadTime = moment().format('YYYY-MM-DD HH:mm:ss');
     await githubPutFileAPI({ base64File, uploadTime })
       .then((res: any) => {
         const {
@@ -59,7 +59,7 @@ class GithubUpload {
   }
 
   async deleteGithubFile(item: any) {
-    const deleteTime = moment().format('YYYY-MM-DD hh:mm:ss');
+    const deleteTime = moment().format('YYYY-MM-DD HH:mm:ss');
     const { path, sha } = item;
     const { imageReload, insertUploadImagesLog } = this;
 

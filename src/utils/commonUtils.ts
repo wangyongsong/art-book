@@ -1,11 +1,13 @@
 /* eslint-disable func-names */
 import { message } from 'antd';
 import { RcFile } from 'antd/lib/upload';
+import sharp from 'sharp';
 import { clipboard } from 'electron';
 import textToSVG from 'text-to-svg';
 import fs from 'fs-extra';
 import https from 'https';
 import { URL } from 'url';
+import db from '../db';
 
 /**
  *  @description: key value 转换 options
@@ -140,6 +142,11 @@ export function singleMessage(
   });
 }
 
+export type FileToBase64Type = {
+  base64: string;
+  name: string;
+};
+
 /**
  * @description: 剪切板内容
  */
@@ -164,61 +171,70 @@ export function getClipboardContents(): FileToBase64Type {
   }
 }
 
-export type FileToBase64Type = {
-  base64: string;
-  name: string;
-};
+/**
+ * @description: 图片水印
+ */
+export async function watermark(
+  sharpImage: any,
+  { watermarkRaw, bottom, right }: any
+) {
+  const watermarkImg = await watermarkRaw.toBuffer();
+  return sharpImage.overlayWith(watermarkImg, { bottom, right });
+}
+
+/**
+ * @description: 文字水印
+ */
+export async function pasteText({ text, fontSize, color }: any) {
+  const textSVG = textToSVG.loadSync();
+
+  const options: any = {
+    x: 0, // 文本开头的水平位置（默认值：0）
+    y: 0, // 文本的基线的垂直位置（默认值：0）
+    fontSize,
+    anchor: 'top',
+    // letterSpacing: "",  // 设置字母的间距
+    attributes: { fill: color },
+  };
+
+  return textSVG.getSVG(text, options);
+}
 
 /**
  * @description: file转换base64
  */
-export function fileToBase64(file: RcFile): FileToBase64Type {
+export function fileToBase64(file: RcFile, formData: any): FileToBase64Type {
+  const returnData = { base64: '', name: '' };
   try {
+    if (!file) return returnData;
+
     return {
       base64: Buffer.from(fs.readFileSync(file.path)).toString('base64'),
       name: file.name,
     };
   } catch (error) {
     message.error(error);
-    return { base64: '', name: '' };
+    return returnData;
   }
 }
 
-/**
- * @description: 图片水印
- * @param  { Sharp } sharpImage 原图
- * @param  { String } watermarkRaw 水印图片
- * @param  { top } 水印距图片上边缘距离
- * @param  { left } 水印距图片左边缘距离
- */
-export async function watermark(
-  sharpImage: any,
-  { watermarkRaw, top, left }: any
-) {
-  const watermarkImg = await watermarkRaw.toBuffer();
-  return sharpImage.overlayWith(watermarkImg, { top, left });
-}
-
-/**
- * @description: 文字水印
- * @param  { Sharp  } image
- * @param  { String } text 待粘贴文字
- * @param  { Number } fontSize 文字大小
- * @param  { String } color 文字颜色
- * @param  { Number } left 文字距图片左边缘距离
- * @param  { Number } top 文字距图片上边缘距离
- */
-export async function pasteText(
-  image: any,
-  { text, fontSize, color, left, top }: any
-) {
-  const textSVG = textToSVG.loadSync();
-  const attributes = { fill: color };
-  const options: any = {
-    fontSize,
-    anchor: 'top',
-    attributes,
-  };
-  const svg = Buffer.from(textSVG.getSVG(text, options));
-  return image.overlayWith(svg, { left, top });
+export function fileHandle(file: RcFile, formData: any) {
+  const { openWatermark } = formData;
+  const svg = db.get('waterMarkSVG');
+  if (openWatermark) {
+    return sharp(file.path)
+      .composite([{ input: Buffer.from(svg), gravity: 'southeast' }])
+      .sharpen()
+      .withMetadata()
+      .webp({ quality: 90 })
+      .toBuffer()
+      .then((outputBuffer) => {
+        return outputBuffer.toString('base64');
+      })
+      .catch((err) => {
+        console.error(`err`, err);
+        message.error('（ 图片 + 水印 ）合成失败');
+      });
+  }
+  return null;
 }
