@@ -219,19 +219,20 @@ export function fileToBase64(file: RcFile): FileToBase64Type {
 }
 
 export function fileHandle(file: RcFile, formData: any) {
-  const { openWatermark } = formData;
+  const { watermark: openWatermark } = formData;
   const svg = db.get('waterMarkSVG');
+  const { top, left } = db.get('uploadSetting.watermark');
+
   if (openWatermark) {
     return sharp(file.path, { animated: true })
-      .composite([{ input: Buffer.from(svg), gravity: 'southeast' }])
+      .composite([{ input: Buffer.from(svg), gravity: 'southeast', top, left }])
       .sharpen()
-      .withMetadata()
       .jpeg({ quality: 80, optimiseScans: true, chromaSubsampling: '4:4:4' })
       .png({ progressive: true, compressionLevel: 8 })
       .webp({ quality: 80, lossless: true })
+      .withMetadata()
       .toBuffer()
       .then((outputBuffer) => {
-        console.log(`outputBuffer`, outputBuffer);
         return outputBuffer.toString('base64');
       })
       .catch((err) => {

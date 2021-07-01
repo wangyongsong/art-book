@@ -10,6 +10,7 @@ import {
   Select,
   InputNumber,
 } from 'antd';
+import { cloneDeep } from 'lodash';
 import db from '../../../../../db';
 import ColorSelect from '../../../../../components/Select/colorSelect';
 import CONSTDATA from '../../../../../config/constData';
@@ -37,7 +38,11 @@ const WaterMarkDrawer = (props: CType) => {
   }));
 
   const onFinish = (values: any) => {
-    db.set(UPLOADSETTING_WATERMARK, values);
+    const data = cloneDeep(values);
+    // data.top = data.top === null ? undefined : data.top;
+    // data.left = data.left === null ? undefined : data.left;
+
+    db.set(UPLOADSETTING_WATERMARK, data);
     pasteText({
       text: values.text,
       fontSize: values.fontSize,
@@ -91,10 +96,9 @@ const WaterMarkDrawer = (props: CType) => {
         layout="vertical"
         initialValues={{
           waterMarkType: 'text',
-          fontSize: 14,
+          fontSize: 30,
           color: CONSTDATA.colorOptions[0].value,
-          right: 10,
-          bottom: 10,
+          waterMarkLocation: 'lowRight',
         }}
         onFinish={onFinish}
       >
@@ -153,33 +157,58 @@ const WaterMarkDrawer = (props: CType) => {
           </Col>
           <Col span={12}>
             <Form.Item
-              name="right"
-              label="文字距图片右边缘距离"
+              name="waterMarkLocation"
+              label="水印位置"
               rules={[{ required: true }]}
             >
-              <InputNumber
-                placeholder="请输入距离"
-                min={-10000}
-                max={10000}
-                style={{ width: '100%' }}
-              />
-            </Form.Item>
-          </Col>
-          <Col span={12}>
-            <Form.Item
-              name="bottom"
-              label="文字距图片下边缘距离"
-              rules={[{ required: true }]}
-            >
-              <InputNumber
-                placeholder="请输入距离"
-                min={-10000}
-                max={10000}
-                style={{ width: '100%' }}
+              <Select
+                options={[
+                  { label: '右下角', value: 'lowRight' },
+                  { label: '自定义', value: 'custom' },
+                ]}
               />
             </Form.Item>
           </Col>
         </Row>
+        <Form.Item shouldUpdate>
+          {() => {
+            const show = form.getFieldValue('waterMarkLocation') === 'custom';
+            return (
+              show && (
+                <Row>
+                  <Col span={12}>
+                    <Form.Item
+                      name="left"
+                      label="距左边缘的像素偏移量"
+                      rules={[{ required: true }]}
+                    >
+                      <InputNumber
+                        placeholder="请输入偏移量"
+                        min={-10000}
+                        max={10000}
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      name="top"
+                      label="距上边缘的像素偏移量"
+                      rules={[{ required: true }]}
+                    >
+                      <InputNumber
+                        placeholder="请输入偏移量"
+                        min={-10000}
+                        max={10000}
+                        style={{ width: '100%' }}
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              )
+            );
+          }}
+        </Form.Item>
       </Form>
     </Drawer>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Button,
   Form,
@@ -10,7 +10,6 @@ import {
   message,
 } from 'antd';
 import { CloudUploadOutlined } from '@ant-design/icons';
-import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { UploadChangeParam } from 'antd/lib/upload';
 import { cloneDeep } from 'lodash';
@@ -24,30 +23,30 @@ import TagSelect from '../../../../components/Select/tagSelect';
 import './resourceSeeting.global.scss';
 import {
   fileHandle,
-  fileToBase64,
-  FileToBase64Type,
   getClipboardContents,
 } from '../../../../utils/commonUtils';
+import useGetDB from '../../../../hooks/useGetDB';
 
 const ResourceSeeting = () => {
-  const dispatch = useDispatch();
-
   const [form] = Form.useForm();
   const history = useHistory();
-  const [useUploadForm] = useState(db.get('useUploadForm'));
+  const {
+    dbData: useUploadFormDB,
+    setNewDBData: setNewDBDataUploadFormDB,
+  } = useGetDB('useUploadForm');
   const [fileList] = useState([]);
   const [hasAccountDisabled, sethasAccountDisabled] = useState<boolean>(true);
   const { commonUploadImage } = useUploadCore();
 
   const hasAcount = (useAccount: string, prompt = false) => {
     const noAc = !db.get(`accountSetting.${useAccount}`);
-    const msgKey = 'msgSeting';
+    const msgKey = 'msgSetting';
     sethasAccountDisabled(noAc);
     if (prompt && noAc)
       message.warning({
         content: (
           <span>
-            您还未绑定该平台的账号，请前往“设置”绑定账号！
+            您还未绑定该平台的账号，请前往“设置-账号绑定”配置选项！
             <Button
               type="link"
               onClick={() => {
@@ -69,9 +68,41 @@ const ResourceSeeting = () => {
     return noAc;
   };
 
-  // const getImagesCallback = useCallback(() => getImages(dispatch), [dispatch]);
+  const hasUploadSetting = (name: string) => {
+    const noAc = !db.get(`uploadSetting.${name}`);
+    const msgKey = 'msgUploadSetting';
+    if (noAc) {
+      form.setFieldsValue({ [name]: false });
+      db.set(`useUploadForm.${name}`, false);
+      message.warning({
+        content: (
+          <span>
+            您还未配置相关内容，请前往“设置-上传设置”配置选项！
+            <Button
+              type="link"
+              onClick={() => {
+                message.destroy(msgKey);
+                history.push({
+                  pathname: '/setting',
+                  state: { menu: '上传设置' },
+                });
+              }}
+              style={{ padding: 0, border: 0 }}
+            >
+              点击跳转
+            </Button>
+          </span>
+        ),
+        duration: 10,
+        key: msgKey,
+      });
+    }
+
+    return noAc;
+  };
 
   useEffect(() => {
+    form.setFieldsValue({ ...useUploadFormDB });
     const dis = hasAcount(form.getFieldValue('useAccount'));
     sethasAccountDisabled(dis);
   }, []);
@@ -82,15 +113,16 @@ const ResourceSeeting = () => {
         form={form}
         name="resourceSeetingForm"
         initialValues={{
-          useAccount: useUploadForm?.useAccount,
-          openWatermark: useUploadForm?.openWatermark || false,
-          tagId: useUploadForm?.tagId || 5,
+          tagId: 5,
+          watermark: false,
+          compression: false,
         }}
         onValuesChange={(_, v: any) => {
           const { useAccount } = v;
           const data = cloneDeep(v);
+          console.log(`data`, data);
           if (hasAcount(useAccount)) delete data.useAccount;
-          db.set('useUploadForm', data);
+          setNewDBDataUploadFormDB(data);
         }}
         labelCol={{ span: 8 }}
         wrapperCol={{ span: 14 }}
@@ -104,13 +136,28 @@ const ResourceSeeting = () => {
         <Form.Item name="tagId" label="标签">
           <TagSelect />
         </Form.Item>
-        <Form.Item name="openWatermark" label="水印" valuePropName="checked">
-          <Switch checkedChildren="开启" unCheckedChildren="关闭" />
+        <Form.Item name="watermark" label="水印" valuePropName="checked">
+          <Switch
+            checkedChildren="开启"
+            unCheckedChildren="关闭"
+            onChange={(value) => {
+              if (value) hasUploadSetting('watermark');
+            }}
+          />
+        </Form.Item>
+        <Form.Item name="compression" label="压缩" valuePropName="checked">
+          <Switch
+            checkedChildren="开启"
+            unCheckedChildren="关闭"
+            onChange={(value) => {
+              if (value) hasUploadSetting('compression');
+            }}
+          />
         </Form.Item>
         <Form.Item label="进度">
           <Progress percent={99} status="active" />
         </Form.Item>
-        <div style={{ width: 100, height: 50 }} />
+        <div style={{ width: 100, height: 20 }} />
 
         <Row justify="center">
           <Form.Item>
@@ -125,9 +172,8 @@ const ResourceSeeting = () => {
                   return;
                 }
                 const formData = form.getFieldsValue();
-                // const base64File = fileToBase64(originFileObj, formData);
-                // commonUploadImage(base64File, formData);
                 const base64File = fileHandle(originFileObj, formData);
+                console.log(`base64File`, base64File)
                 base64File?.then((base64: any) => {
                   if (!base64) return null;
                   commonUploadImage(
