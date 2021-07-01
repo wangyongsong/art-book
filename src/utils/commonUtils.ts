@@ -203,7 +203,7 @@ export async function pasteText({ text, fontSize, color }: any) {
 /**
  * @description: file转换base64
  */
-export function fileToBase64(file: RcFile, formData: any): FileToBase64Type {
+export function fileToBase64(file: RcFile): FileToBase64Type {
   const returnData = { base64: '', name: '' };
   try {
     if (!file) return returnData;
@@ -222,13 +222,16 @@ export function fileHandle(file: RcFile, formData: any) {
   const { openWatermark } = formData;
   const svg = db.get('waterMarkSVG');
   if (openWatermark) {
-    return sharp(file.path)
+    return sharp(file.path, { animated: true })
       .composite([{ input: Buffer.from(svg), gravity: 'southeast' }])
       .sharpen()
       .withMetadata()
-      .webp({ quality: 90 })
+      .jpeg({ quality: 80, optimiseScans: true, chromaSubsampling: '4:4:4' })
+      .png({ progressive: true, compressionLevel: 8 })
+      .webp({ quality: 80, lossless: true })
       .toBuffer()
       .then((outputBuffer) => {
+        console.log(`outputBuffer`, outputBuffer);
         return outputBuffer.toString('base64');
       })
       .catch((err) => {
