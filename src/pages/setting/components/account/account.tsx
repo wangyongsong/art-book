@@ -1,5 +1,7 @@
+/* eslint-disable react/no-array-index-key */
 import React, { useRef } from 'react';
-import { List, Button, Avatar } from 'antd';
+import { List, Button, Avatar, Tooltip } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import GithubConfigDrawer from './components/githubConfigDrawer';
 import GiteeConfigDrawer from './components/giteeConfigDrawer';
 
@@ -21,6 +23,12 @@ const Base = () => {
     {
       title: 'GitHub',
       avatar: githubLogo,
+      tooltip: [
+        '免费使用',
+        '仓库最大容量1G',
+        '单个文件最大50M',
+        '需要翻墙（科学上网）',
+      ],
       description: 'GitHub图床配置',
       action: [
         <Button
@@ -36,6 +44,13 @@ const Base = () => {
       title: 'Gitee',
       avatar: giteeLogo,
       description: 'Gitee图床配置',
+      tooltip: [
+        '免费使用',
+        '仓库最大容量500M',
+        '单个文件最大50M',
+        '单个图片超过1M不显示',
+        '国内访问速度快，无需翻墙',
+      ],
       action: [
         <Button
           type="link"
@@ -86,7 +101,23 @@ const Base = () => {
                 />
               }
               title={item.title}
-              description={item.description}
+              description={
+                <Tooltip
+                  placement="right"
+                  title={
+                    item.tooltip && (
+                      <div>
+                        {item.tooltip.map((tm: string, index: number) => (
+                          <div key={index}>{`${index + 1}、${tm}`}</div>
+                        ))}
+                      </div>
+                    )
+                  }
+                >
+                  {item.description}{' '}
+                  {item.tooltip && <QuestionCircleOutlined />}
+                </Tooltip>
+              }
             />
           </List.Item>
         )}

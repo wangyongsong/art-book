@@ -71,7 +71,6 @@ class UploadCore {
     if (openWatermark) sharpData = this.sharpWaterMark(sharpData);
 
     await sharpData
-      .withMetadata()
       .toBuffer()
       .then((outputBuffer) => {
         const name =
@@ -96,7 +95,7 @@ class UploadCore {
   }
 
   sharpImage(input: Buffer | string) {
-    return sharp(input, { animated: true }).sharpen();
+    return sharp(input, { animated: true }).sharpen().withMetadata();
   }
 
   sharpWaterMark(sharpFile: Sharp) {

@@ -1,5 +1,5 @@
 /* eslint-disable class-methods-use-this */
-import { Modal } from 'antd';
+import { message, Modal } from 'antd';
 import moment from 'moment';
 import db from '../../db';
 import { FileToBase64Type } from '../../utils/commonUtils';
@@ -114,6 +114,7 @@ class GithubUpload {
   }
 
   insertUploadImagesLog(title: string, description: string, success: boolean) {
+    if (!success) message.error(`${title} 失败内容可在“上传日志”查看`);
     db.insert('uploadImagesLog', {
       title,
       success,
