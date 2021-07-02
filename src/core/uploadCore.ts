@@ -2,6 +2,7 @@
 import { clipboard } from 'electron';
 import sharp, { Sharp } from 'sharp';
 import { message } from 'antd';
+import axios from 'axios';
 import db from '../db';
 import githubUpload from './github/githubUpload';
 import giteeUpload from './gitee/giteeUpload';
@@ -53,8 +54,13 @@ class UploadCore {
       case 'clipboard':
         data = this.clipboardUploadImage();
         break;
-      case 'url':
+      case 'url': {
+        await this.imgUrlToBase64(file.bufferFile).then((v) => {
+          if (v) data = { bufferFile: v, name: file.name };
+          return null;
+        });
         break;
+      }
       default:
         break;
     }
@@ -66,9 +72,9 @@ class UploadCore {
 
     let sharpData = this.sharpImage(data?.bufferFile);
 
-    if (openCompression) sharpData = this.sharpCompression(sharpData);
-
     if (openWatermark) sharpData = this.sharpWaterMark(sharpData);
+
+    if (openCompression) sharpData = this.sharpCompression(sharpData);
 
     await sharpData
       .toBuffer()
@@ -157,7 +163,21 @@ class UploadCore {
     }
   }
 
-  urlUploadImage() {}
+  async imgUrlToBase64(url: string) {
+    return axios
+      .get(url, {
+        responseType: 'arraybuffer',
+      })
+      .then((res) => {
+        if (res.status === 200) {
+          return Buffer.from(res.data);
+        }
+        return null;
+      })
+      .catch((err) => {
+        console.error(`err`, err);
+      });
+  }
 }
 
 export default UploadCore;

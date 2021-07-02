@@ -73,6 +73,7 @@ const createWindow = async () => {
     height: 525,
     icon: getAssetPath('icon.png'),
     webPreferences: {
+      webSecurity: false,
       nodeIntegration: true,
       enableRemoteModule: true,
     },
@@ -117,6 +118,7 @@ const createWindow = async () => {
 /**
  * Add event listeners...
  */
+app.commandLine.appendSwitch('disable-web-security');
 
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even

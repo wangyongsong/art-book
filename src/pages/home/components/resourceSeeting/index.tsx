@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Button,
   Form,
@@ -19,6 +19,7 @@ import UploadCore from '../../../../core/uploadCore';
 import TagSelect from '../../../../components/Select/tagSelect';
 import useGetDB from '../../../../hooks/useGetDB';
 import useGetDispatch from '../../../../hooks/useGetDispatch';
+import UrlUploadModal from './components/urlUploadModal';
 
 import './resourceSeeting.global.scss';
 
@@ -32,6 +33,7 @@ const ResourceSeeting = () => {
   const [fileList] = useState([]);
   const { getImagesList } = useGetDispatch();
   const uc = new UploadCore(getImagesList);
+  const urlUploadModal: any = useRef();
   const [hasAccountDisabled, sethasAccountDisabled] = useState<boolean>(true);
 
   const hasAcount = (useAccount: string, prompt = false) => {
@@ -202,13 +204,18 @@ const ResourceSeeting = () => {
               shape="round"
               disabled={hasAccountDisabled}
               icon={<CloudUploadOutlined />}
-              onClick={() => {}}
+              onClick={() => urlUploadModal.current.open()}
             >
               上传在线图片
             </Button>
           </Form.Item>
         </Row>
       </Form>
+      <UrlUploadModal
+        oRef={urlUploadModal}
+        formData={form.getFieldsValue()}
+        uc={uc}
+      />
     </div>
   );
 };

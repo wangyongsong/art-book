@@ -104,7 +104,6 @@ export function apiMessage(
  * @description: Image的URL转base64
  */
 export async function imgUrlToBase64(url: string | https.RequestOptions | URL) {
-  let base64Img;
   return new Promise(function (resolve) {
     const req = https.get(url, function (res) {
       const chunks: any[] = [];
@@ -115,8 +114,8 @@ export async function imgUrlToBase64(url: string | https.RequestOptions | URL) {
       });
       res.on('end', function () {
         const data = Buffer.concat(chunks, size);
-        base64Img = data.toString('base64');
-        resolve({ success: true, base64Img });
+        // base64Img = data.toString('base64');
+        resolve({ success: true, data });
       });
     });
     req.on('error', (e) => {
