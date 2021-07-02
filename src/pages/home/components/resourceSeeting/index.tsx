@@ -15,17 +15,12 @@ import { UploadChangeParam } from 'antd/lib/upload';
 import { cloneDeep } from 'lodash';
 import db from '../../../../db';
 import CONSTDATA from '../../../../config/constData';
-// import { getImages } from '../../../../auction/homeAction';
-// import githubUpload from '../../../../core/github/githubUpload';
-import useUploadCore from '../../../../core/uploadCore';
+import UploadCore from '../../../../core/uploadCore';
 import TagSelect from '../../../../components/Select/tagSelect';
+import useGetDB from '../../../../hooks/useGetDB';
+import useGetDispatch from '../../../../hooks/useGetDispatch';
 
 import './resourceSeeting.global.scss';
-import {
-  fileHandle,
-  getClipboardContents,
-} from '../../../../utils/commonUtils';
-import useGetDB from '../../../../hooks/useGetDB';
 
 const ResourceSeeting = () => {
   const [form] = Form.useForm();
@@ -35,8 +30,9 @@ const ResourceSeeting = () => {
     setNewDBData: setNewDBDataUploadFormDB,
   } = useGetDB('useUploadForm');
   const [fileList] = useState([]);
+  const { getImagesList } = useGetDispatch();
+  const uc = new UploadCore(getImagesList);
   const [hasAccountDisabled, sethasAccountDisabled] = useState<boolean>(true);
-  const { commonUploadImage } = useUploadCore();
 
   const hasAcount = (useAccount: string, prompt = false) => {
     const noAc = !db.get(`accountSetting.${useAccount}`);
@@ -115,12 +111,11 @@ const ResourceSeeting = () => {
         initialValues={{
           tagId: 5,
           watermark: false,
-          compression: false,
+          compression: true,
         }}
         onValuesChange={(_, v: any) => {
           const { useAccount } = v;
           const data = cloneDeep(v);
-          console.log(`data`, data);
           if (hasAcount(useAccount)) delete data.useAccount;
           setNewDBDataUploadFormDB(data);
         }}
@@ -171,20 +166,9 @@ const ResourceSeeting = () => {
                   message.error('获取源文件失败！');
                   return;
                 }
+                message.info('正在处理图片，请等候...');
                 const formData = form.getFieldsValue();
-                const base64File = fileHandle(originFileObj, formData);
-                console.log(`base64File`, base64File)
-                base64File?.then((base64: any) => {
-                  if (!base64) return null;
-                  commonUploadImage(
-                    {
-                      base64,
-                      name: originFileObj.name,
-                    },
-                    formData
-                  );
-                  return null;
-                });
+                uc.autoAppointUploadImage('common', originFileObj, formData);
               }}
             >
               <Button
@@ -204,9 +188,8 @@ const ResourceSeeting = () => {
               disabled={hasAccountDisabled}
               onClick={() => {
                 const formData = form.getFieldsValue();
-                const base64File = getClipboardContents();
-                if (!base64File.base64) return;
-                commonUploadImage(base64File, formData);
+                message.info('正在处理图片，请等候...');
+                uc.autoAppointUploadImage('clipboard', null, formData);
               }}
               icon={<CloudUploadOutlined />}
             >

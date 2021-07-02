@@ -1,10 +1,12 @@
 import React, { useRef } from 'react';
 import { List, Button } from 'antd';
 import WaterMarkDrawer from './components/waterMarkDrawer';
+import CompressionDrawer from './components/compressionDrawer';
 import useGetDB from '../../../../hooks/useGetDB';
 
 const Base = () => {
   const waterMarkDrawerRef: any = useRef();
+  const compressionDrawerRef: any = useRef();
   const {
     dbData: uploadSettingData,
     getNewDBData: getNewUploadSetting,
@@ -28,7 +30,11 @@ const Base = () => {
       title: '压缩配置',
       description: '关于上传图片的压缩配置',
       action: [
-        <Button type="link" key="1" onClick={() => {}}>
+        <Button
+          type="link"
+          key="1"
+          onClick={() => compressionDrawerRef.current.open()}
+        >
           {uploadSettingData?.compression ? '已配置' : '添加'}
         </Button>,
       ],
@@ -48,6 +54,10 @@ const Base = () => {
       />
       <WaterMarkDrawer
         oRef={waterMarkDrawerRef}
+        reloadList={getNewUploadSetting}
+      />
+      <CompressionDrawer
+        oRef={compressionDrawerRef}
         reloadList={getNewUploadSetting}
       />
     </>

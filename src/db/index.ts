@@ -42,6 +42,12 @@ class DB {
     }
     if (!this.db.has('uploadSetting').value()) {
       this.db.set('uploadSetting', {}).write();
+      if (!this.db.has('uploadSetting.compression').value()) {
+        this.db.set('uploadSetting.compression', {
+          forceDB: 'notRevise',
+          qualityDB: 80,
+        });
+      }
     }
     if (!this.db.has('accountSetting').value()) {
       this.db.set('accountSetting', {}).write();

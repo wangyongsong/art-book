@@ -56,6 +56,7 @@ const CONSTDATA = {
     { label: '天空蓝', value: '#7ed6df' },
     { label: '红色', value: 'red' },
   ],
+  pictureExpression: /\.(png|jpe?g|gif|svg|webp|tiff|heif)(\?.*)?$/,
 };
 
 export default CONSTDATA;

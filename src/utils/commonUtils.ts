@@ -219,26 +219,75 @@ export function fileToBase64(file: RcFile): FileToBase64Type {
 }
 
 export function fileHandle(file: RcFile, formData: any) {
-  const { watermark: openWatermark } = formData;
-  const svg = db.get('waterMarkSVG');
-  const { top, left } = db.get('uploadSetting.watermark');
+  const { watermark: openWatermark, compression: openCompression } = formData;
+  const { qualityDB = 90, forceDB } = db.get('uploadSetting.compression') || {};
+
+  const quality = openCompression ? qualityDB : undefined;
+  const compressionLevel = quality ? quality / 10 : undefined;
+  const watermarkArr = [];
 
   if (openWatermark) {
-    return sharp(file.path, { animated: true })
-      .composite([{ input: Buffer.from(svg), gravity: 'southeast', top, left }])
-      .sharpen()
-      .jpeg({ quality: 80, optimiseScans: true, chromaSubsampling: '4:4:4' })
-      .png({ progressive: true, compressionLevel: 8 })
-      .webp({ quality: 80, lossless: true })
-      .withMetadata()
-      .toBuffer()
-      .then((outputBuffer) => {
-        return outputBuffer.toString('base64');
-      })
-      .catch((err) => {
-        console.error(`err`, err);
-        message.error('（ 图片 + 水印 ）合成失败');
-      });
+    const svg = db.get('waterMarkSVG');
+    const { top, left } = db.get('uploadSetting.watermark');
+    watermarkArr.push({
+      input: Buffer.from(svg),
+      gravity: 'southeast',
+      top,
+      left,
+    });
   }
-  return null;
+
+  return sharp(file.path, { animated: true })
+    .composite(watermarkArr)
+    .sharpen()
+    .jpeg({
+      quality,
+      optimiseScans: true,
+      chromaSubsampling: '4:4:4',
+      force: forceDB === 'jepg',
+    })
+    .png({
+      progressive: true,
+      compressionLevel,
+      force: forceDB === 'png',
+    })
+    .webp({ quality, lossless: true, force: forceDB === 'webp' })
+    .withMetadata()
+    .toBuffer()
+    .then((outputBuffer) => {
+      return {
+        base64: outputBuffer.toString('base64'),
+        name: file.name,
+      };
+    })
+    .catch((err) => {
+      console.error(`err`, err);
+      message.error('（ 图片 + 水印 ）合成失败');
+    });
+  // .toBuffer((err, buffer, info) => {
+  //   console.log(`info`, info);
+  //   console.log(`info.size`, formatFileSize(info.size));
+  // });
+}
+
+/**
+ * @description: 换算文件大小
+ */
+export function formatFileSize(fileSize: number) {
+  if (fileSize < 1024) {
+    return `${fileSize}B`;
+  }
+  if (fileSize < 1024 * 1024) {
+    let temp: any = fileSize / 1024;
+    temp = temp.toFixed(2);
+    return `${temp}KB`;
+  }
+  if (fileSize < 1024 * 1024 * 1024) {
+    let temp: any = fileSize / (1024 * 1024);
+    temp = temp.toFixed(2);
+    return `${temp}MB`;
+  }
+  let temp: any = fileSize / (1024 * 1024 * 1024);
+  temp = temp.toFixed(2);
+  return `${temp}GB`;
 }

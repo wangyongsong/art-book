@@ -1,6 +1,6 @@
 /* eslint-disable no-plusplus */
-import React, { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import {
   Menu,
   Image,
@@ -32,18 +32,16 @@ import { cloneDeep, find } from 'lodash';
 import CONSTDATA from '../../../../config/constData';
 import TagSelect from '../../../../components/Select/tagSelect';
 import db from '../../../../db';
-import { getImages } from '../../../../auction/homeAction';
 import githubUpload from '../../../../core/github/githubUpload';
 import { urlTransform } from '../../../../utils/commonUtils';
 import imageError from '../../../../assets/general/noNetWork.svg';
 import useDeleteCore from '../../../../core/deleteCore';
+import useGetDispatch from '../../../../hooks/useGetDispatch';
 
 const ResourceManager = () => {
-  const dispatch = useDispatch();
-
   const { images } = useSelector((state: any) => state.homeReducer);
   const filterImageForm = db.get('filterImageForm');
-  const getImagesCallback = useCallback(() => getImages(dispatch), [dispatch]);
+  const { getImagesList } = useGetDispatch();
   const [checkedList, setCheckedList] = useState<any[]>([]);
   const [showList, setShowList] = useState<any[]>([]);
   const [current, setCurrent] = useState(1);
@@ -83,9 +81,9 @@ const ResourceManager = () => {
   };
 
   useEffect(() => {
-    getImagesCallback();
+    getImagesList();
     paginationChange(1);
-    githubUpload.reload(getImagesCallback);
+    githubUpload.reload(getImagesList);
   }, []);
 
   useEffect(() => {
@@ -172,7 +170,8 @@ const ResourceManager = () => {
               data.createdTime = data.createdTime.format('YYYY-MM-DD');
             }
             db.set('filterImageForm', data);
-            getImagesCallback();
+            getImagesList();
+            paginationChange(1);
           }}
         >
           <Form.Item name="useAccount">
