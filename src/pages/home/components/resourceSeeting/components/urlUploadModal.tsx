@@ -24,12 +24,19 @@ const UrlUploadModal = (props: Props) => {
 
   const onFinish = (values: any) => {
     const { url, name } = values;
-    message.info('正在处理图片，请等候...');
+    let suffix = '';
+
+    try {
+      suffix = url.split('.').pop();
+    } catch (error) {
+      suffix = 'png';
+    }
+
     uc.autoAppointUploadImage(
       'url',
       {
         bufferFile: url,
-        name,
+        name: `${name}.${suffix}`,
       },
       formData
     );

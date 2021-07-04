@@ -1,8 +1,10 @@
 /* eslint-disable class-methods-use-this */
 import { clipboard } from 'electron';
+import fs from 'fs-extra';
 import sharp, { Sharp } from 'sharp';
 import { message } from 'antd';
 import axios from 'axios';
+import { RcFile } from 'antd/lib/upload';
 import db from '../db';
 import githubUpload from './github/githubUpload';
 import giteeUpload from './gitee/giteeUpload';
@@ -44,12 +46,18 @@ class UploadCore {
       compression: openCompression,
     }: any = form;
     const { forceDB } = db.get('uploadSetting.compression') || {};
+    const { watermark, compression } = db.get('useUploadForm');
 
-    let data = null;
+    let data: any = null;
     switch (type) {
       case 'common':
-        if (!file.path) return data;
-        data = { bufferFile: file.path, name: file.name };
+        if (watermark && compression) {
+          data = { bufferFile: file.path, name: file.name };
+        } else {
+          data = this.fileToBase64(file);
+          this.commonUploadImage(data, form);
+          return null;
+        }
         break;
       case 'clipboard':
         data = this.clipboardUploadImage();
@@ -66,7 +74,6 @@ class UploadCore {
     }
 
     if (!data) {
-      message.error('图片转换失败');
       return null;
     }
 
@@ -80,9 +87,9 @@ class UploadCore {
       .toBuffer()
       .then((outputBuffer) => {
         const name =
-          openCompression && forceDB === 'notRevise'
-            ? file.name
-            : `${file.name}_change.${forceDB}`;
+          forceDB === 'notRevise'
+            ? data.name
+            : `${data.name}_change.${forceDB || 'png'}`;
         this.commonUploadImage(
           {
             base64: outputBuffer.toString('base64'),
@@ -151,6 +158,8 @@ class UploadCore {
         message.warning('未获取到剪切板内容');
         return null;
       }
+      message.info('正在处理图片，请等候...');
+
       const bufferFile = Buffer.from(image.toPNG(), 'binary');
 
       return {
@@ -172,11 +181,27 @@ class UploadCore {
         if (res.status === 200) {
           return Buffer.from(res.data);
         }
+        message.error('图片下载失败');
+
         return null;
       })
       .catch((err) => {
+        message.error('图片下载失败');
         console.error(`err`, err);
       });
+  }
+
+  fileToBase64(file: RcFile) {
+    if (!file) return null;
+    try {
+      return {
+        base64: Buffer.from(fs.readFileSync(file.path)).toString('base64'),
+        name: file.name,
+      };
+    } catch (error) {
+      message.error(error);
+      return null;
+    }
   }
 }
 

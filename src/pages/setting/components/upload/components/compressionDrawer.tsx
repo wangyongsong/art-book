@@ -108,6 +108,7 @@ const WaterMarkDrawer = (props: CType) => {
                 placeholder="请输入压缩质量"
                 min={10}
                 max={90}
+                precision={0}
                 formatter={(value) => `${value}%`}
                 parser={(value: any) => value.replace('%', '')}
                 style={{ width: '100%' }}

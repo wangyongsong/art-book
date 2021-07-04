@@ -112,7 +112,7 @@ const WaterMarkDrawer = (props: CType) => {
               <Select
                 options={[
                   { label: '自定义文字', value: 'text' },
-                  { label: '自定义图片', value: 'pic' },
+                  // { label: '自定义图片', value: 'pic' },
                 ]}
                 placeholder="请选择水印方式"
               />

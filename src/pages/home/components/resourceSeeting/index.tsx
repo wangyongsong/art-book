@@ -151,10 +151,10 @@ const ResourceSeeting = () => {
             }}
           />
         </Form.Item>
-        <Form.Item label="进度">
+        {/* <Form.Item label="进度">
           <Progress percent={99} status="active" />
-        </Form.Item>
-        <div style={{ width: 100, height: 20 }} />
+        </Form.Item> */}
+        <div style={{ width: 100, height: 50 }} />
 
         <Row justify="center">
           <Form.Item>
@@ -190,7 +190,6 @@ const ResourceSeeting = () => {
               disabled={hasAccountDisabled}
               onClick={() => {
                 const formData = form.getFieldsValue();
-                message.info('正在处理图片，请等候...');
                 uc.autoAppointUploadImage('clipboard', null, formData);
               }}
               icon={<CloudUploadOutlined />}
