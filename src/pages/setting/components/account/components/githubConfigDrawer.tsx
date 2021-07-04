@@ -94,14 +94,14 @@ const GithubConfigDrawer = (props: CType) => {
           <Col span={24}>
             <Form.Item
               name="accessToken"
-              label="访问令牌 ( access token ) "
+              label="访问令牌"
               rules={[
                 {
                   required: true,
                 },
               ]}
             >
-              <Input.Password placeholder="请输入访问令牌" />
+              <Input.Password placeholder="请输入access Token" />
             </Form.Item>
           </Col>
         </Row>
@@ -120,11 +120,11 @@ const GithubConfigDrawer = (props: CType) => {
               <Input placeholder="例如: images/" />
             </Form.Item>
           </Col>
-          <Col span={12}>
+          {/* <Col span={12}>
             <Form.Item name="domainName" label="自定义域名">
               <Input placeholder="例如: https://xxxx.com" />
             </Form.Item>
-          </Col>
+          </Col> */}
         </Row>
       </Form>
     </Drawer>

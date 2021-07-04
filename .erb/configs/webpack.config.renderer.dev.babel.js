@@ -213,6 +213,7 @@ export default merge(baseConfig, {
       // { test: /\.node$/, use: "node-loader"}
     ],
   },
+
   plugins: [
 
     requiredByDLLConfig

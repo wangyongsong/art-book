@@ -171,6 +171,13 @@ export default class MenuBuilder {
             shell.openExternal('https://github.com/electron/electron/issues');
           },
         },
+        {
+          label: '开发者调试',
+          accelerator: 'Alt+Command+I',
+          click: () => {
+            this.mainWindow.webContents.toggleDevTools();
+          },
+        },
       ],
     };
 
