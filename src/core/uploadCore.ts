@@ -50,8 +50,11 @@ class UploadCore {
 
     let data: any = null;
     switch (type) {
-      case 'common':
-        if (watermark && compression) {
+      case 'common': {
+        const typeStr = file.type || '';
+        const typeFlag = typeStr.indexOf('image') !== -1;
+
+        if (watermark && compression && typeFlag) {
           data = { bufferFile: file.path, name: file.name };
         } else {
           data = this.fileToBase64(file);
@@ -59,6 +62,7 @@ class UploadCore {
           return null;
         }
         break;
+      }
       case 'clipboard':
         data = this.clipboardUploadImage();
         break;

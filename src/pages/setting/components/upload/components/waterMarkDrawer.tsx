@@ -97,7 +97,7 @@ const WaterMarkDrawer = (props: CType) => {
         initialValues={{
           waterMarkType: 'text',
           fontSize: 30,
-          color: CONSTDATA.colorOptions[0].value,
+          color: CONSTDATA.colorOptions[4].value,
           waterMarkLocation: 'lowRight',
         }}
         onFinish={onFinish}
