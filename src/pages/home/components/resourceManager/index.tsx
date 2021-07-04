@@ -1,5 +1,5 @@
 /* eslint-disable no-plusplus */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
   Menu,
@@ -23,6 +23,7 @@ import {
   DeleteOutlined,
   EllipsisOutlined,
   PlusCircleOutlined,
+  InfoCircleOutlined,
   CloseCircleOutlined,
   QuestionCircleOutlined,
 } from '@ant-design/icons';
@@ -37,17 +38,20 @@ import { urlTransform } from '../../../../utils/commonUtils';
 import imageError from '../../../../assets/general/noNetWork.svg';
 import useDeleteCore from '../../../../core/deleteCore';
 import useGetDispatch from '../../../../hooks/useGetDispatch';
+import InfoModal from './components/infoModal';
 
 const ResourceManager = () => {
   const { images } = useSelector((state: any) => state.homeReducer);
   const filterImageForm = db.get('filterImageForm');
-  const { getImagesList } = useGetDispatch();
-  const [checkedList, setCheckedList] = useState<any[]>([]);
-  const [showList, setShowList] = useState<any[]>([]);
-  const [current, setCurrent] = useState(1);
-  const [comptedPageSize, setComptedPageSize] = useState(32);
-  const { confirmDeleteImage } = useDeleteCore();
   const [form] = Form.useForm();
+  const infoModalRef: any = useRef();
+  const [selectItem, setselectItem] = useState({});
+  const [current, setCurrent] = useState(1);
+  const { getImagesList } = useGetDispatch();
+  const { confirmDeleteImage } = useDeleteCore();
+  const [showList, setShowList] = useState<any[]>([]);
+  const [checkedList, setCheckedList] = useState<any[]>([]);
+  const [comptedPageSize, setComptedPageSize] = useState(32);
 
   const checkOnChange = (list: any) => setCheckedList(list);
 
@@ -293,11 +297,18 @@ const ResourceManager = () => {
                               case 'markdown':
                                 urlTransform([item], 'markdown');
                                 break;
+                              case 'info':
+                                setselectItem(item);
+                                infoModalRef.current.open();
+                                break;
                               default:
                                 break;
                             }
                           }}
                         >
+                          <Menu.Item key="info" icon={<InfoCircleOutlined />}>
+                            查看详情
+                          </Menu.Item>
                           <Menu.Item key="html" icon={<CopyOutlined />}>
                             生成 HTML 链接
                           </Menu.Item>
@@ -341,6 +352,8 @@ const ResourceManager = () => {
           showTotal={(total) => `总共 ${total} 条`}
         />
       </div>
+
+      <InfoModal oRef={infoModalRef} selectItem={selectItem} />
     </div>
   );
 };

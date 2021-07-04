@@ -77,7 +77,14 @@ export function urlTransform(
       break;
   }
   // if (copyable) copy(str);
-  if (copyable) clipboard.write({ text: str });
+  if (copyable) {
+    try {
+      clipboard.write({ text: str });
+      message.success('复制成功！');
+    } catch (error) {
+      message.warning('该设备不支持自动复制，请点开图片详情手动复制');
+    }
+  }
 
   return str;
 }
