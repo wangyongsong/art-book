@@ -14,14 +14,14 @@ const useDeleteCore = () => {
   const dispatch = useDispatch();
   const getImagesCallback = useCallback(() => getImages(dispatch), [dispatch]);
 
-  const deleteImage = (item: any) => {
+  const deleteImage = (item: any, msgFlag = true) => {
     const { useAccount } = item;
     if (!item) {
       message.error('获取图片信息失败！');
       return;
     }
 
-    message.info('正在请求删除数据，请等候...');
+    if (msgFlag) message.info('正在请求删除数据，请等候...');
     switch (useAccount) {
       case 'github':
         githubUpload.deleteGithubFile(item);
@@ -44,7 +44,12 @@ const useDeleteCore = () => {
       icon: <ExclamationCircleOutlined />,
       onOk() {
         const len = item.length;
-        if (len === 1) deleteImage(item[0]);
+        if (len === 1) {
+          deleteImage(item[0]);
+        } else {
+          message.info('正在批量删除数据，请等候...');
+          item.forEach((tm) => deleteImage(tm, false));
+        }
       },
     });
   };

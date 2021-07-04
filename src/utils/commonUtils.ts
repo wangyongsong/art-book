@@ -63,15 +63,15 @@ export function urlTransform(
   let str = '';
   switch (type) {
     case 'url':
-      str = url.map((item) => item.src).join(' ');
+      str = url.map((item) => item.src).join('\n');
       break;
     case 'markdown':
-      str = url.map((item) => `![${item.path}](${item.src})`).join(' ');
+      str = url.map((item) => `![${item.path}](${item.src})`).join('\n');
       break;
     case 'html':
       str = url
         .map((item) => `<img src="${item.src}" alt="${item.path}"/>`)
-        .join(' ');
+        .join('\n');
       break;
     default:
       break;

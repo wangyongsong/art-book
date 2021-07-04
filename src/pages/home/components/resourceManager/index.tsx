@@ -49,9 +49,7 @@ const ResourceManager = () => {
   const { confirmDeleteImage } = useDeleteCore();
   const [form] = Form.useForm();
 
-  const checkOnChange = (list: any) => {
-    setCheckedList(list);
-  };
+  const checkOnChange = (list: any) => setCheckedList(list);
 
   const computedElement = () => {
     const resourceItemEle: HTMLElement | null = document.querySelector(
@@ -97,24 +95,24 @@ const ResourceManager = () => {
     return data[name];
   };
 
-  const menuOnClick = ({ key }: any) => {
-    switch (key) {
-      case '1':
-        setCheckedList([...showList]);
-        break;
-      case '2':
-        setCheckedList([...images]);
-        break;
-      case '3':
-        setCheckedList([]);
-        break;
-      default:
-        break;
-    }
-  };
-
   const selectedMenu = (
-    <Menu onClick={menuOnClick}>
+    <Menu
+      onClick={({ key }: any) => {
+        switch (key) {
+          case '1':
+            setCheckedList([...showList]);
+            break;
+          case '2':
+            setCheckedList([...images]);
+            break;
+          case '3':
+            setCheckedList([]);
+            break;
+          default:
+            break;
+        }
+      }}
+    >
       <Menu.Item key="1" icon={<PlusOutlined />}>
         选中当前页
       </Menu.Item>
@@ -127,9 +125,41 @@ const ResourceManager = () => {
     </Menu>
   );
 
-  // const pictureMenu = (
-
-  // );
+  const batchHandleMenu = (
+    <Menu
+      onClick={({ key }: any) => {
+        switch (key) {
+          case '1':
+            urlTransform(checkedList, 'url');
+            break;
+          case '2':
+            urlTransform(checkedList, 'html');
+            break;
+          case '3':
+            urlTransform(checkedList, 'markdown');
+            break;
+          case '10':
+            confirmDeleteImage(checkedList);
+            break;
+          default:
+            break;
+        }
+      }}
+    >
+      <Menu.Item key="1" icon={<CopyOutlined />}>
+        批量 - 复制链接
+      </Menu.Item>
+      <Menu.Item key="2" icon={<CopyOutlined />}>
+        批量 - 生成 HTML 链接
+      </Menu.Item>
+      <Menu.Item key="3" icon={<CopyOutlined />}>
+        批量 - 生成 MarkDown 链接
+      </Menu.Item>
+      <Menu.Item key="10" icon={<DeleteOutlined />}>
+        批量 - 删除
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <div className="resourceManagerContent">
@@ -146,9 +176,16 @@ const ResourceManager = () => {
             </Button>
           </Dropdown>
           {!!checkedList.length && (
-            <Button type="primary" size="small" ghost style={{ marginLeft: 5 }}>
-              批量操作 <DownOutlined />
-            </Button>
+            <Dropdown overlay={batchHandleMenu} trigger={['click']}>
+              <Button
+                type="primary"
+                size="small"
+                ghost
+                style={{ marginLeft: 5 }}
+              >
+                批量操作 <DownOutlined />
+              </Button>
+            </Dropdown>
           )}
           {!!checkedList.length && (
             <span className="selectNum">已选择 {checkedList.length} 项</span>
