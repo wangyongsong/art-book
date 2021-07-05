@@ -1,16 +1,22 @@
 /* eslint-disable class-methods-use-this */
 import { clipboard } from 'electron';
 import fs from 'fs-extra';
-import sharp, { Sharp } from 'sharp';
+// import sharp, { Sharp } from 'sharp';
 import { message } from 'antd';
 import axios from 'axios';
 import { RcFile } from 'antd/lib/upload';
 import db from '../db';
 import githubUpload from './github/githubUpload';
 import giteeUpload from './gitee/giteeUpload';
-import { FileToBase64Type } from '../utils/commonUtils';
+import { FileToBase64Type, watermark } from '../utils/commonUtils';
+import tinifyCompression from './compression/tinifyAPI';
 
-type FormData = { useAccount: string; tagId: number };
+export type FormData = {
+  useAccount: string;
+  tagId: number;
+  compression: boolean;
+  watermark: boolean;
+};
 
 class UploadCore {
   reloadImageList: any;
@@ -19,7 +25,7 @@ class UploadCore {
     this.reloadImageList = reload;
   }
 
-  commonUploadImage(base64File: FileToBase64Type, form: FormData) {
+  upload(base64File: FileToBase64Type, form: FormData) {
     const { useAccount } = form;
     switch (useAccount) {
       case 'github':
@@ -36,125 +42,116 @@ class UploadCore {
     }
   }
 
-  async autoAppointUploadImage(
-    type: 'common' | 'clipboard' | 'url',
-    file: any,
-    form: FormData
-  ) {
-    const {
-      watermark: openWatermark,
-      compression: openCompression,
-    }: any = form;
-    const { forceDB } = db.get('uploadSetting.compression') || {};
-    const { watermark, compression } = db.get('useUploadForm');
+  summary(type: string, file: any, form: FormData) {
+    const { watermark: openWatermark, compression: openCompression } = form;
+    if (!openWatermark && !openCompression) {
+      this.noWaterMarkAndNoCompression(type, file, form);
+    } else {
+      let path = '';
+      let name = '';
+      switch (type) {
+        case 'common':
+          path = file.path;
+          name = file.name;
+          break;
+        case 'clipboard': {
+          const data = this.clipboardUploadImage('dataURL');
+          path = data?.file || '';
+          name = data?.name || '';
+          break;
+        }
+        case 'url':
+          path = file.url;
+          name = file.name;
+          break;
+        default:
+          break;
+      }
+      this.imageToCanvas(path, name, form);
+    }
+  }
 
+  async noWaterMarkAndNoCompression(type: string, file: any, form: FormData) {
     let data: any = null;
     switch (type) {
-      case 'common': {
-        const typeStr = file.type || '';
-        const typeFlag = typeStr.indexOf('image') !== -1;
-
-        if (watermark && compression && typeFlag) {
-          data = { bufferFile: file.path, name: file.name };
-        } else {
-          data = this.fileToBase64(file);
-          this.commonUploadImage(data, form);
-          return null;
-        }
+      case 'common':
+        data = this.fileToBase64(file);
         break;
-      }
       case 'clipboard':
-        data = this.clipboardUploadImage();
+        data = this.clipboardUploadImage('base64');
         break;
-      case 'url': {
-        await this.imgUrlToBase64(file.bufferFile).then((v) => {
-          if (v) data = { bufferFile: v, name: file.name };
-          return null;
-        });
+      case 'url':
+        data = await this.imgUrlToBase64(file.url, file.name);
         break;
-      }
       default:
         break;
     }
+    if (!data) return;
+    message.info('正在处理图片，请等候...');
+    this.upload(data, form);
+  }
 
-    if (!data) {
-      return null;
-    }
+  async imageToCanvas(src: string, name: string, form: FormData) {
+    const img = new Image();
+    img.src = src;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const { height, width } = img;
 
-    let sharpData = this.sharpImage(data?.bufferFile);
+      canvas.width = width;
+      canvas.height = height;
 
-    if (openWatermark) sharpData = this.sharpWaterMark(sharpData);
+      ctx?.drawImage(img, 0, 0);
 
-    if (openCompression) sharpData = this.sharpCompression(sharpData);
+      if (form.watermark) {
+        const watermarkDB = db.get('uploadSetting.watermark') || {};
+        let waterWith = watermarkDB.left;
+        let waterHeight = watermarkDB.top;
+        if (ctx) ctx.font = `${watermarkDB.fontSize}px SimSun, Songti SC`;
+        if (ctx) ctx.fillStyle = watermarkDB.color;
+        if (watermarkDB.waterMarkLocation === 'lowRight') {
+          waterWith = width - watermarkDB.fontSize * watermarkDB.text.length;
+          waterHeight = height - 10;
+        }
+        ctx?.fillText(watermarkDB.text, waterWith, waterHeight);
+      }
 
-    await sharpData
-      .toBuffer()
-      .then((outputBuffer) => {
-        const name =
-          forceDB === 'notRevise'
-            ? data.name
-            : `${data.name}_change.${forceDB || 'png'}`;
-        this.commonUploadImage(
+      if (form.compression) {
+        canvas.toBlob(
+          async (blob) => {
+            console.log(`blob`, blob);
+            await tinifyCompression(name, {
+              input: blob,
+            })
+              .then((res) => {
+                console.log(`res`, res);
+                return null;
+              })
+              .catch((err) => {
+                console.log(`err`, err);
+              });
+          },
+          'image/png',
+          1
+        );
+      } else {
+        const data = canvas.toDataURL('image/png', 1);
+        const base64 = data.replace(/^data:image\/\w+;base64,/, '');
+
+        this.upload(
           {
-            base64: outputBuffer.toString('base64'),
+            base64,
             name,
           },
           form
         );
-        return null;
-      })
-      .catch((err) => {
-        console.error(`err`, err);
-        message.error('（ 图片 + 水印 ）合成失败');
-      });
-
-    return null;
+      }
+    };
   }
 
-  sharpImage(input: Buffer | string) {
-    return sharp(input, { animated: true }).sharpen().withMetadata();
-  }
-
-  sharpWaterMark(sharpFile: Sharp) {
-    const svg = db.get('waterMarkSVG');
-    const { top, left } = db.get('uploadSetting.watermark');
-    const watermarkArr = [];
-    watermarkArr.push({
-      input: Buffer.from(svg),
-      gravity: 'southeast',
-      top,
-      left,
-    });
-    return sharpFile.composite(watermarkArr);
-  }
-
-  sharpCompression(sharpFile: Sharp) {
-    const { qualityDB = 90, forceDB } =
-      db.get('uploadSetting.compression') || {};
-
-    const quality = qualityDB || undefined;
-    const compressionLevel = quality ? quality / 10 : undefined;
-
-    return sharpFile
-      .jpeg({
-        quality,
-        optimiseScans: true,
-        chromaSubsampling: '4:4:4',
-        force: forceDB === 'jepg',
-      })
-      .png({
-        progressive: true,
-        compressionLevel,
-        force: forceDB === 'png',
-      })
-      .webp({
-        quality,
-        lossless: true,
-        force: forceDB === 'webp',
-      });
-  }
-
-  clipboardUploadImage() {
+  // clipboard
+  clipboardUploadImage(type: 'base64' | 'dataURL') {
     try {
       const image: any = clipboard.readImage();
 
@@ -162,39 +159,48 @@ class UploadCore {
         message.warning('未获取到剪切板内容');
         return null;
       }
-      message.info('正在处理图片，请等候...');
-
-      const bufferFile = Buffer.from(image.toPNG(), 'binary');
-
-      return {
-        name: `${new Date().getTime()}-剪切板图片.png`,
-        bufferFile,
-      };
+      const name = `剪切板图片.png`;
+      let file = '';
+      switch (type) {
+        case 'base64':
+          file = Buffer.from(image.toPNG(), 'binary').toString('base64');
+          break;
+        case 'dataURL':
+          file = image.toDataURL();
+          break;
+        default:
+          break;
+      }
+      return { file, name };
     } catch (error) {
       message.error(`剪贴板数据无法转换成图片! ${error}`);
-      return null;
     }
+    return null;
   }
 
-  async imgUrlToBase64(url: string) {
-    return axios
+  // url to base64
+  async imgUrlToBase64(url: string, name: string) {
+    let data: { base64: string; name: string } | null = null;
+    await axios
       .get(url, {
         responseType: 'arraybuffer',
       })
       .then((res) => {
         if (res.status === 200) {
-          return Buffer.from(res.data);
+          const base64 = Buffer.from(res.data).toString('base64');
+          data = { base64, name };
+          return data;
         }
         message.error('图片下载失败');
-
-        return null;
+        return data;
       })
       .catch((err) => {
-        message.error('图片下载失败');
-        console.error(`err`, err);
+        message.error(`网络连接失败 ${err}`);
       });
+    return data;
   }
 
+  // file to base64
   fileToBase64(file: RcFile) {
     if (!file) return null;
     try {

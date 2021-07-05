@@ -154,7 +154,8 @@ const ResourceSeeting = () => {
         {/* <Form.Item label="进度">
           <Progress percent={99} status="active" />
         </Form.Item> */}
-        <div style={{ width: 100, height: 50 }} />
+        {/* <div style={{ width: 100, height: 50 }} /> */}
+        <img id="canvasID" src="123" alt="" />
 
         <Row justify="center">
           <Form.Item>
@@ -170,7 +171,7 @@ const ResourceSeeting = () => {
                 }
                 message.info('正在处理图片，请等候...');
                 const formData = form.getFieldsValue();
-                uc.autoAppointUploadImage('common', originFileObj, formData);
+                uc.summary('common', originFileObj, formData);
               }}
             >
               <Button
@@ -190,7 +191,7 @@ const ResourceSeeting = () => {
               disabled={hasAccountDisabled}
               onClick={() => {
                 const formData = form.getFieldsValue();
-                uc.autoAppointUploadImage('clipboard', null, formData);
+                uc.summary('clipboard', null, formData);
               }}
               icon={<CloudUploadOutlined />}
             >
