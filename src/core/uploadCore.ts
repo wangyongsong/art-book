@@ -1,7 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import { clipboard } from 'electron';
 import fs from 'fs-extra';
-// import sharp, { Sharp } from 'sharp';
 import { message } from 'antd';
 import axios from 'axios';
 import { RcFile } from 'antd/lib/upload';
@@ -120,12 +119,16 @@ class UploadCore {
       if (form.compression) {
         canvas.toBlob(
           async (blob) => {
-            console.log(`blob`, blob);
-            await tinifyCompression(name, {
-              input: blob,
-            })
-              .then((res) => {
-                console.log(`res`, res);
+            await tinifyCompression(name, blob)
+              .then(async (res) => {
+                if (res.status === 201) {
+                  console.log(`res.data`, res.data);
+                  const outPut: any = await this.imgUrlToBase64(
+                    res.data.output.url,
+                    name
+                  );
+                  this.upload(outPut, form);
+                }
                 return null;
               })
               .catch((err) => {
