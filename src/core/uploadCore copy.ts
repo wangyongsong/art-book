@@ -7,8 +7,8 @@ import { RcFile } from 'antd/lib/upload';
 import db from '../db';
 import githubUpload from './github/githubUpload';
 import giteeUpload from './gitee/giteeUpload';
-import { FileToBase64Type } from '../utils/commonUtils';
-import compressionCore from './compression/compressionCore';
+import { FileToBase64Type, watermark } from '../utils/commonUtils';
+import tinifyCompression from './compression/tinify/tinifyAPI';
 
 export type FormData = {
   useAccount: string;
@@ -117,9 +117,27 @@ class UploadCore {
       }
 
       if (form.compression) {
-        canvas.toBlob((blob) => {
-          if (blob) compressionCore.distribution(blob, form);
-        });
+        canvas.toBlob(
+          async (blob) => {
+            await tinifyCompression(blob)
+              .then(async (res) => {
+                if (res.status === 201) {
+                  console.log(`res.data`, res.data);
+                  const outPut: any = await this.imgUrlToBase64(
+                    res.data.output.url,
+                    name
+                  );
+                  this.upload(outPut, form);
+                }
+                return null;
+              })
+              .catch((err) => {
+                console.log(`err`, err);
+              });
+          },
+          'image/png',
+          1
+        );
       } else {
         const data = canvas.toDataURL('image/png', 1);
         const base64 = data.replace(/^data:image\/\w+;base64,/, '');
