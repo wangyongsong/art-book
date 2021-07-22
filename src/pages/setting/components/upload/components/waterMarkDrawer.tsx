@@ -39,24 +39,16 @@ const WaterMarkDrawer = (props: CType) => {
 
   const onFinish = (values: any) => {
     const data = cloneDeep(values);
-    // data.top = data.top === null ? undefined : data.top;
-    // data.left = data.left === null ? undefined : data.left;
-
-    db.set(UPLOADSETTING_WATERMARK, data);
-    pasteText({
-      text: values.text,
-      fontSize: values.fontSize,
-      color: values.color,
-    })
-      .then((value) => {
-        db.set('waterMarkSVG', value);
-        message.success(`水印配置成功`);
-        return true;
-      })
-      .catch((err) => {
-        console.error(`文字转svg图片失败`, err);
-        message.error('文字转svg出错，配置失败');
-      });
+    data.top = data.top === null ? undefined : data.top;
+    data.left = data.left === null ? undefined : data.left;
+    let offsetWidth = 100;
+    const span = document.getElementById('getWaterMarkWidth');
+    if (span) {
+      span.innerHTML = data.text;
+      span.style.fontSize = data.fontSize;
+      offsetWidth = span.offsetWidth;
+    }
+    db.set(UPLOADSETTING_WATERMARK, { offsetWidth, ...data });
 
     close();
     reloadList();
@@ -210,6 +202,7 @@ const WaterMarkDrawer = (props: CType) => {
           }}
         </Form.Item>
       </Form>
+      <span id="getWaterMarkWidth" style={{ overflow: 'hidden' }} />
     </Drawer>
   );
 };

@@ -19,8 +19,6 @@ class CompressionCore {
     // this.imagemin(blob);
   }
 
-  tinify() {}
-
   async imagemin(buffer: Buffer) {
     return imagemin
       .buffer(buffer, {

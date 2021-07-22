@@ -8,7 +8,7 @@ import db from '../db';
 import githubUpload from './github/githubUpload';
 import giteeUpload from './gitee/giteeUpload';
 import { FileToBase64Type } from '../utils/commonUtils';
-import compressionCore from './compression/compressionCore';
+// import compressionCore from './compression/compressionCore';
 
 export type FormData = {
   useAccount: string;
@@ -110,7 +110,7 @@ class UploadCore {
         if (ctx) ctx.font = `${watermarkDB.fontSize}px SimSun, Songti SC`;
         if (ctx) ctx.fillStyle = watermarkDB.color;
         if (watermarkDB.waterMarkLocation === 'lowRight') {
-          waterWith = width - watermarkDB.fontSize * watermarkDB.text.length;
+          waterWith = width - watermarkDB.offsetWidth * 3;
           waterHeight = height - 10;
         }
         ctx?.fillText(watermarkDB.text, waterWith, waterHeight);
@@ -118,7 +118,7 @@ class UploadCore {
 
       if (form.compression) {
         canvas.toBlob((blob) => {
-          if (blob) compressionCore.distribution(blob, form);
+          // if (blob) compressionCore.distribution(blob);
         });
       } else {
         const data = canvas.toDataURL('image/png', 1);
